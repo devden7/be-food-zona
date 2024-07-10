@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  name String @db.VarChar(50)
+  username String @id @db.VarChar(20) @unique
+  password String @db.VarChar(20)
+  createAt DateTime @default(now())
+  updateAt DateTime @default(now())
+  
+  orders Order[]
+  restaurant Restaurant?
+  foodReview FoodReview[]
+  @@map("users")
+}
+
+model Restaurant {
+  restaurantName String @id @db.VarChar(50)
+  createdAt DateTime @default(now())
+  username String @unique
+  city_name String 
+
+  food Food[]
+  city City @relation(fields: [city_name], references: [city_name])
+  user User @relation(fields: [username], references: [username])
+
+  @@map("restaurant")
+}
+
+model City {
+  city_name String @id @db.VarChar(50)
+  restaurant Restaurant[]
+
+  @@map("city")
+}
+
+model Order {
+  orderId Int @id @default(autoincrement())
+  totalPrice Int
+  status String @db.VarChar(10)
+  foodNameOrder String
+  username String @db.VarChar(20)
+  foodId Int
+
+  user User @relation(fields: [username], references: [username])
+  foodReview FoodReview[]
+
+  @@map("orders")
+}
+
+model FoodReview {
+  username String
+  order_id Int
+  comment String
+  rating Int
+  createdAt DateTime @default(now())
+
+
+user User @relation(fields: [username], references: [username])
+order Order @relation(fields: [order_id], references: [orderId])
+
+@@id([username,order_id])
+@@map("food_reviews")
+}
+
+model Food {
+  foodId Int @id @default(autoincrement())
+  name String @db.VarChar(150)
+  description String @db.VarChar(250)
+  price Int 
+  restaurantName String @db.VarChar(50)
+
+  category FoodCategory[]
+  restaurant Restaurant @relation(fields: [restaurantName], references: [restaurantName])
+
+  @@map("foods")
+}
+
+model Category {
+  categoryId Int @id @default(autoincrement())
+  name String @db.VarChar(50)
+  food String @db.VarChar(20)
+
+  foods FoodCategory[]
+  
+  @@map("categories")
+}
+
+model FoodCategory {
+  foodId Int
+  categoryId Int
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  food Food @relation(fields: [foodId], references: [foodId])
+  category Category @relation(fields: [categoryId], references: [categoryId])
+
+
+  @@id([categoryId,foodId])
+  @@map("food_categories")
+}
+
