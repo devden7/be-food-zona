@@ -1,9 +1,11 @@
 import { Global, Module } from '@nestjs/common';
 import { WinstonModule } from 'nest-winston';
-import * as winston from 'winston';
-import { PrismaServices } from './prisma.service';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import * as winston from 'winston';
+
+import { PrismaServices } from './prisma.service';
+import { ValidationService } from './validation.service';
 
 @Global()
 @Module({
@@ -28,7 +30,7 @@ import { JwtModule } from '@nestjs/jwt';
       },
     }),
   ],
-  providers: [PrismaServices],
-  exports: [PrismaServices],
+  providers: [PrismaServices, ValidationService],
+  exports: [PrismaServices, ValidationService],
 })
 export class CommonModule {}
