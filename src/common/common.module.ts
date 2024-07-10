@@ -3,6 +3,7 @@ import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 import { PrismaServices } from './prisma.service';
 import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 
 @Global()
 @Module({
@@ -18,6 +19,13 @@ import { ConfigModule } from '@nestjs/config';
     }),
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_KEY,
+      signOptions: {
+        expiresIn: 60,
+      },
     }),
   ],
   providers: [PrismaServices],
