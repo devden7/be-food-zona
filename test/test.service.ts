@@ -9,9 +9,9 @@ export class TestService {
   async createDummyUser() {
     await this.prismaService.user.create({
       data: {
-        username: 'test',
-        name: 'test',
-        password: await bcrypt.hash('test', 7),
+        username: 'test1',
+        name: 'test1',
+        password: await bcrypt.hash('123456', 7),
       },
     });
   }
