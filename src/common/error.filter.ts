@@ -13,7 +13,7 @@ export class ErrorFiler implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       response.status(exception.getStatus()).json({
-        errors: exception.getResponse,
+        errors: exception.getResponse(),
       });
     } else if (exception instanceof ZodError) {
       const errorsArr = exception.issues.map(({ path, message }) => ({
