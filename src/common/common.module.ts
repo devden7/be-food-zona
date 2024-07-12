@@ -6,6 +6,7 @@ import * as winston from 'winston';
 
 import { PrismaServices } from './prisma.service';
 import { ValidationService } from './validation.service';
+import { ErrorFiler } from './error.filter';
 
 @Global()
 @Module({
@@ -30,7 +31,11 @@ import { ValidationService } from './validation.service';
       },
     }),
   ],
-  providers: [PrismaServices, ValidationService],
+  providers: [
+    PrismaServices,
+    ValidationService,
+    { provide: 'APP_FILTER', useClass: ErrorFiler },
+  ],
   exports: [PrismaServices, ValidationService],
 })
 export class CommonModule {}

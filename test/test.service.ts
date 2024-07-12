@@ -17,7 +17,7 @@ export class TestService {
   }
 
   async deleteDummyUser() {
-    await this.prismaService.user.delete({
+    await this.prismaService.user.deleteMany({
       where: { username: 'test1' },
     });
   }

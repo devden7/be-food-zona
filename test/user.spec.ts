@@ -25,7 +25,6 @@ describe('UserController Test', () => {
 
   describe('POST Create User : /api/register', () => {
     beforeEach(async () => {
-      await testService.createDummyUser();
       await testService.deleteDummyUser();
     });
 
@@ -54,8 +53,8 @@ describe('UserController Test', () => {
         });
 
       logger.info(response.body);
-      expect(response.status).toBe(500);
-      expect(response.error).toBeDefined();
+      expect(response.status).toBe(400);
+      expect(response.body.errors).toBeDefined();
     });
   });
 });
