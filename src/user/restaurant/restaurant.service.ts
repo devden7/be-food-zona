@@ -57,7 +57,7 @@ export class RestaurantService {
     });
 
     return {
-      RestaurantName: insertDataRestaurant.restaurantName,
+      restaurantName: insertDataRestaurant.restaurantName,
       username: 'test1', // STILL HARD-CODED
     };
   }

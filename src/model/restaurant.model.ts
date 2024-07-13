@@ -5,5 +5,5 @@ export interface IRegisterRestaurant {
 
 export interface IResponseRestaurant {
   username: string;
-  RestaurantName: string;
+  restaurantName: string;
 }
