@@ -7,7 +7,7 @@ import {
   IRequestFormProduct,
   IResponseFormProduct,
 } from 'src/model/foods.model';
-import { ProductsValidaton } from './products.validation';
+import { ProductsValidaton } from './foods.validation';
 
 @Injectable()
 export class FoodsService {
