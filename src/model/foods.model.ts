@@ -7,4 +7,9 @@ export interface IRequestFormProduct {
 
 export interface IResponseFormProduct {
   message: string;
+  food: {
+    name: string;
+    description: string;
+    price: number;
+  };
 }
