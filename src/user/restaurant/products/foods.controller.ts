@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { FoodsService } from './foods.service';
 import {
   IRequestFormProduct,
@@ -12,7 +12,7 @@ export class FoodsController {
 
   @Post('/create-food')
   async createFood(
-    request: IRequestFormProduct,
+    @Body() request: IRequestFormProduct,
   ): Promise<IResponseFE<IResponseFormProduct>> {
     const response = await this.foodService.createProduct(request);
     return { data: response };

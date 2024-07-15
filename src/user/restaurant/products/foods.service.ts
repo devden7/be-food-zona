@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
-import { PrismaServices } from 'src/common/prisma.service';
-import { ValidationService } from 'src/common/validation.service';
+import { PrismaServices } from '../../../common/prisma.service';
+import { ValidationService } from '../../../common/validation.service';
 import {
   IRequestFormProduct,
   IResponseFormProduct,
@@ -29,6 +29,12 @@ export class FoodsService {
 
     const { foodName, description, price, category } = validationRequest;
 
+    const insertDataCategories = await this.prismaService.category.upsert({
+      where: { name: category },
+      create: { name: category },
+      update: {},
+    });
+
     const insertDataFoodAndCategory = await this.prismaService.food.create({
       data: {
         name: foodName,
@@ -37,15 +43,11 @@ export class FoodsService {
         category: {
           create: [
             {
-              category: {
-                create: {
-                  name: category,
-                },
-              },
+              categoryId: insertDataCategories.categoryId,
             },
           ],
         },
-        restaurantName: 'restaurant ayam geprek', // STILL HARD-CODED
+        restaurantName: 'Restaurant ayam geprek', // STILL HARD-CODED
       },
       include: { restaurant: true },
     });
