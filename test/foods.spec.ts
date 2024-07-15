@@ -89,4 +89,86 @@ describe('FoodController Test', () => {
       expect(response.status).toBe(200);
     });
   });
+
+  describe('UPDATE Foods : /api/update/:foodId', () => {
+    it('Should be succsess test when updating a food', async () => {
+      const response = await request(app.getHttpServer())
+        .put('/api/update/7')
+        .send({
+          foodName: 'ayam penyet pedas updateddd',
+          description: 'ayam penyet pedas description',
+          price: 50000,
+        });
+
+      logger.info(response.body);
+      expect(response.status).toBe(200);
+      expect(response.body.data.food.name).toBe('ayam penyet pedas updateddd');
+      expect(response.body.data.food.description).toBe(
+        'ayam penyet pedas description',
+      );
+      expect(response.body.data.food.price).toBe(50000);
+    });
+
+    it('Should be invalid test when updating a food (ParamsId not found)', async () => {
+      const response = await request(app.getHttpServer())
+        .put('/api/update/8')
+        .send({
+          foodName: 'ayam penyet pedas updateddd',
+          description: 'ayam penyet pedas description',
+          price: 50000,
+        });
+
+      logger.info(response.body);
+      expect(response.status).toBe(404);
+      expect(response.body.errors).toBe('Food not found');
+    });
+
+    it('Should be invalid test when updating a food (Restaurant Name not valid)', async () => {
+      const response = await request(app.getHttpServer())
+        .put('/api/update/7')
+        .send({
+          foodName: 'ayam penyet pedas updatedddd',
+          description: 'ayam penyet pedas description',
+          price: 50000,
+        });
+
+      logger.info(response.body);
+      expect(response.status).toBe(404);
+      expect(response.body.errors).toBe('Food not found');
+    });
+
+    it('Should be an invalid test when updateting a food (Foodname,Description, : Character less than 1, Price : number lower than 1000)', async () => {
+      const response = await request(app.getHttpServer())
+        .put('/api/update/7')
+        .send({
+          foodName: '',
+          description: '',
+          price: 999,
+        });
+
+      logger.info(response.body);
+      expect(response.status).toBe(400);
+      expect(response.body.errors[0].path[0]).toBe('foodName');
+      expect(response.body.errors[1].path[0]).toBe('description');
+      expect(response.body.errors[2].path[0]).toBe('price');
+    });
+
+    it('Should be an invalid test when updating a food (Foodname : Character more than 150,Description : Character more than 250, price : number greater than 1.000.000)', async () => {
+      const response = await request(app.getHttpServer())
+        .put('/api/update/7')
+        .send({
+          foodName:
+            'food name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name ',
+          description:
+            'food name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name',
+          price: 1100000,
+        });
+
+      logger.info(response.body);
+      expect(response.status).toBe(400);
+      expect(response.body.errors[0].path[0]).toBe('foodName');
+      expect(response.body.errors[1].path[0]).toBe('description');
+      expect(response.body.errors[2].path[0]).toBe('price');
+    });
+  });
 });
