@@ -1,8 +1,17 @@
-import { Body, Controller, Post, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Put,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { FoodsService } from './foods.service';
 import {
-  IRequestFormProduct,
-  IResponseFormProduct,
+  IRequestFormFood,
+  IRequestFormUpdateFood,
+  IResponseFormFood,
   IResponseGetFoods,
 } from 'src/model/foods.model';
 import { IResponseFE } from 'src/model/web.model';
@@ -13,15 +22,24 @@ export class FoodsController {
 
   @Post('/create-food')
   async createFood(
-    @Body() request: IRequestFormProduct,
-  ): Promise<IResponseFE<IResponseFormProduct>> {
-    const response = await this.foodService.createProduct(request);
+    @Body() request: IRequestFormFood,
+  ): Promise<IResponseFE<IResponseFormFood>> {
+    const response = await this.foodService.createFood(request);
     return { data: response };
   }
 
   @Get('/restaurant-foods')
   async findFoodByRestaurant(): Promise<IResponseFE<IResponseGetFoods>> {
     const results = await this.foodService.findRestaurantFoods();
+    return { data: results };
+  }
+
+  @Put(`/update/:foodId`)
+  async updateFoodById(
+    @Param('foodId', ParseIntPipe) foodId: number,
+    @Body() request: IRequestFormUpdateFood,
+  ): Promise<IResponseFE<IResponseFormFood>> {
+    const results = await this.foodService.editFood({ foodId, ...request });
     return { data: results };
   }
 }
