@@ -4,10 +4,11 @@ import { Logger } from 'winston';
 import { PrismaServices } from '../../../common/prisma.service';
 import { ValidationService } from '../../../common/validation.service';
 import {
-  IRequestFormProduct,
-  IResponseFormProduct,
+  IRequestFormFood,
+  IRequestFormUpdateFood,
+  IResponseFormFood,
 } from 'src/model/foods.model';
-import { ProductsValidaton } from './foods.validation';
+import { FoodValidaton } from './foods.validation';
 
 @Injectable()
 export class FoodsService {
@@ -17,13 +18,11 @@ export class FoodsService {
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
   ) {}
 
-  async createProduct(
-    request: IRequestFormProduct,
-  ): Promise<IResponseFormProduct> {
+  async createFood(request: IRequestFormFood): Promise<IResponseFormFood> {
     this.logger.info('Create product ' + JSON.stringify(request));
 
     const validationRequest = this.validationService.validate(
-      ProductsValidaton.CREATE_FORM_PRODUCT,
+      FoodValidaton.CREATE_FORM_FOOD,
       request,
     );
 
@@ -67,5 +66,34 @@ export class FoodsService {
       where: { restaurantName: 'Restaurant ayam penyet' }, // STILL HARD-CODED
     });
     return { foods: results };
+  }
+
+  async editFood(request: IRequestFormUpdateFood): Promise<IResponseFormFood> {
+    this.logger.info('Edit Food:' + JSON.stringify(request));
+
+    const validationRequest = this.validationService.validate(
+      FoodValidaton.UPDATE_FORM_FOOD,
+      request,
+    );
+
+    const { foodName, description, price } = validationRequest;
+
+    const updateFood = await this.prismaService.food.update({
+      where: {
+        foodId: request.foodId,
+        restaurantName: 'Restaurant ayam penyet', // STILL HARD-CODED
+      },
+      data: { name: foodName, description, price },
+    });
+
+    console.log(updateFood);
+    return {
+      message: 'Data Berhasil diupdated',
+      food: {
+        name: updateFood.name,
+        description: updateFood.description,
+        price: updateFood.price,
+      },
+    };
   }
 }

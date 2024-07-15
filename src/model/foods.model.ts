@@ -1,11 +1,18 @@
-export interface IRequestFormProduct {
+export interface IRequestFormFood {
   foodName: string;
   description: string;
   price: number;
-  category: string;
+  category?: string;
 }
 
-export interface IResponseFormProduct {
+export interface IRequestFormUpdateFood {
+  foodId: number;
+  foodName: string;
+  description: string;
+  price: number;
+}
+
+export interface IResponseFormFood {
   message?: string;
   food: {
     name: string;
