@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { PrismaServices } from '../../../common/prisma.service';
@@ -78,10 +78,23 @@ export class FoodsService {
 
     const { foodName, description, price } = validationRequest;
 
+    const findFood = await this.prismaService.food.findUnique({
+      where: {
+        foodId: request.foodId,
+        restaurantName: 'Restaurant ayam geprek', // STILL HARD-CODED
+      },
+    });
+
+    console.log(findFood);
+
+    if (!findFood) {
+      throw new HttpException('Food not found', 404);
+    }
+
     const updateFood = await this.prismaService.food.update({
       where: {
         foodId: request.foodId,
-        restaurantName: 'Restaurant ayam penyet', // STILL HARD-CODED
+        restaurantName: 'Restaurant ayam geprek', // STILL HARD-CODED
       },
       data: { name: foodName, description, price },
     });
