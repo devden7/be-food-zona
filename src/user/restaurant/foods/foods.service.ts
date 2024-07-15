@@ -52,8 +52,6 @@ export class FoodsService {
       include: { restaurant: true },
     });
 
-    console.log(insertDataFoodAndCategory);
-
     return {
       message: 'Data Berhasil ditambahkan',
       food: {
@@ -62,5 +60,12 @@ export class FoodsService {
         price: insertDataFoodAndCategory.price,
       },
     };
+  }
+
+  async findRestaurantFoods() {
+    const results = await this.prismaService.food.findMany({
+      where: { restaurantName: 'Restaurant ayam penyet' }, // STILL HARD-CODED
+    });
+    return { foods: results };
   }
 }
