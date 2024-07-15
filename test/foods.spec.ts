@@ -79,4 +79,14 @@ describe('FoodController Test', () => {
       expect(response.body.errors[3].path[0]).toBe('category');
     });
   });
+
+  describe('GET Foods lists : /api/foods', () => {
+    it('Should be succsess test when creating a food', async () => {
+      const response = await request(app.getHttpServer()).get(
+        '/api/restaurant-foods',
+      );
+      logger.info(response.body);
+      expect(response.status).toBe(200);
+    });
+  });
 });
