@@ -90,7 +90,7 @@ model Food {
 
 model Category {
   categoryId Int @id @default(autoincrement())
-  name String @db.VarChar(50)
+  name String @db.VarChar(50) @unique
 
   foods FoodCategory[]
   
