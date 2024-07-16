@@ -85,27 +85,59 @@ export class FoodsService {
       },
     });
 
-    console.log(findFood);
-
     if (!findFood) {
       throw new HttpException('Food not found', 404);
     }
 
     const updateFood = await this.prismaService.food.update({
       where: {
-        foodId: request.foodId,
+        foodId: findFood.foodId,
         restaurantName: 'Restaurant ayam geprek', // STILL HARD-CODED
       },
       data: { name: foodName, description, price },
     });
-
-    console.log(updateFood);
     return {
       message: 'Data Berhasil diupdated',
       food: {
         name: updateFood.name,
         description: updateFood.description,
         price: updateFood.price,
+      },
+    };
+  }
+
+  async deleteFood(paramsId: number): Promise<IResponseFormFood> {
+    this.logger.info('Delete food : ' + JSON.stringify(paramsId));
+
+    const findFood = await this.prismaService.food.findUnique({
+      where: {
+        foodId: paramsId,
+        restaurantName: 'Restaurant ayam geprek', // STILL HARD-CODED
+      },
+    });
+
+    if (!findFood) {
+      throw new HttpException('Food not found', 404);
+    }
+
+    await this.prismaService.foodCategory.deleteMany({
+      where: {
+        foodId: findFood.foodId,
+      },
+    });
+
+    const deleteFood = await this.prismaService.food.delete({
+      where: {
+        foodId: findFood.foodId,
+      },
+    });
+
+    return {
+      message: 'Data Berhasil dihapus',
+      food: {
+        name: deleteFood.name,
+        description: deleteFood.description,
+        price: deleteFood.price,
       },
     };
   }

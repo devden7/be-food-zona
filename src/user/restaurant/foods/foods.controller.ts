@@ -6,6 +6,7 @@ import {
   Put,
   Param,
   ParseIntPipe,
+  Delete,
 } from '@nestjs/common';
 import { FoodsService } from './foods.service';
 import {
@@ -40,6 +41,13 @@ export class FoodsController {
     @Body() request: IRequestFormUpdateFood,
   ): Promise<IResponseFE<IResponseFormFood>> {
     const results = await this.foodService.editFood({ foodId, ...request });
+    return { data: results };
+  }
+  @Delete('/delete/:foodId')
+  async deleteById(
+    @Param('foodId', ParseIntPipe) foodId: number,
+  ): Promise<IResponseFE<IResponseFormFood>> {
+    const results = await this.foodService.deleteFood(foodId);
     return { data: results };
   }
 }
