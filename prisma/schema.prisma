@@ -81,7 +81,7 @@ model Food {
   description String @db.VarChar(250)
   price Int 
   restaurantName String @db.VarChar(50)
-  image String @db.VarChar(250)
+  image String? @db.VarChar(250)
 
   category FoodCategory[]
   restaurant Restaurant @relation(fields: [restaurantName], references: [restaurantName])
