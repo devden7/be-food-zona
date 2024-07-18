@@ -21,6 +21,10 @@ export class FoodsService {
   async createFood(request: IRequestFormFood): Promise<IResponseFormFood> {
     this.logger.info('Create product ' + JSON.stringify(request));
 
+    const validateFileImage = this.validationService.fileFilter(
+      request.fileImage,
+    );
+
     const validationRequest = this.validationService.validate(
       FoodValidaton.CREATE_FORM_FOOD,
       request,
@@ -39,6 +43,7 @@ export class FoodsService {
         name: foodName,
         description,
         price,
+        image: validateFileImage,
         category: {
           create: [
             {
@@ -57,6 +62,7 @@ export class FoodsService {
         name: insertDataFoodAndCategory.name,
         description: insertDataFoodAndCategory.description,
         price: insertDataFoodAndCategory.price,
+        image: insertDataFoodAndCategory.image,
       },
     };
   }

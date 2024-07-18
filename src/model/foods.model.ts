@@ -2,7 +2,19 @@ export interface IRequestFormFood {
   foodName: string;
   description: string;
   price: number;
+  fileImage?: Image | undefined;
   category?: string;
+}
+
+export interface Image {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
 }
 
 export interface IRequestFormUpdateFood {
@@ -18,6 +30,7 @@ export interface IResponseFormFood {
     name: string;
     description: string;
     price: number;
+    image?: string | null;
   };
 }
 

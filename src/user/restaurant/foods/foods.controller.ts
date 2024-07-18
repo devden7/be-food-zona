@@ -7,7 +7,11 @@ import {
   Param,
   ParseIntPipe,
   Delete,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
 import { FoodsService } from './foods.service';
 import {
   IRequestFormFood,
@@ -16,16 +20,23 @@ import {
   IResponseGetFoods,
 } from 'src/model/foods.model';
 import { IResponseFE } from 'src/model/web.model';
+import { IMAGE_MULTER_CONFIG } from './config.multer';
 
 @Controller('/api')
 export class FoodsController {
   constructor(private foodService: FoodsService) {}
 
   @Post('/create-food')
+  @UseInterceptors(FileInterceptor('image', IMAGE_MULTER_CONFIG))
   async createFood(
     @Body() request: IRequestFormFood,
+    @UploadedFile() fileImage: Express.Multer.File,
   ): Promise<IResponseFE<IResponseFormFood>> {
-    const response = await this.foodService.createFood(request);
+    request.price = Number(request.price);
+    const response = await this.foodService.createFood({
+      fileImage,
+      ...request,
+    });
     return { data: response };
   }
 
