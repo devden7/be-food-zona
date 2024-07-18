@@ -6,6 +6,7 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { TestService } from './test.service';
 import { TestModule } from './test.module';
+import * as path from 'path';
 
 describe('FoodController Test', () => {
   let app: INestApplication;
@@ -43,6 +44,106 @@ describe('FoodController Test', () => {
         'ayam geprek pedas description',
       );
       expect(response.body.data.food.price).toBe(20000);
+    });
+
+    it('Should be success test when creating a food with image (FORMAT FILE : PNG)', async () => {
+      const filePath = path.resolve(__dirname, '..', 'upload');
+      const pickImage = path.resolve(filePath, 'testing-png.png');
+
+      const response = await request(app.getHttpServer())
+        .post('/api/create-food')
+        .attach('image', pickImage)
+        .field('foodName', 'ayam geprek pedas')
+        .field('description', 'ayam geprek pedas description')
+        .field('price', 20000)
+        .field('category', 'Junk food');
+
+      logger.info(response.body);
+      expect(response.status).toBe(201);
+      expect(response.body.data.message).toBe('Data Berhasil ditambahkan');
+      expect(response.body.data.food.name).toBe('ayam geprek pedas');
+      expect(response.body.data.food.description).toBe(
+        'ayam geprek pedas description',
+      );
+      expect(response.body.data.food.price).toBe(20000);
+      expect(response.body.data.food.image).toBeDefined();
+    });
+
+    it('Should be success test when creating a food with image (FORMAT FILE : JPG)', async () => {
+      const filePath = path.resolve(__dirname, '..', 'upload');
+      const pickImage = path.resolve(filePath, 'testing-jpg.jpg');
+
+      const response = await request(app.getHttpServer())
+        .post('/api/create-food')
+        .attach('image', pickImage)
+        .field('foodName', 'ayam geprek pedas')
+        .field('description', 'ayam geprek pedas description')
+        .field('price', 20000)
+        .field('category', 'Junk food');
+
+      logger.info(response.body);
+      expect(response.status).toBe(201);
+      expect(response.body.data.message).toBe('Data Berhasil ditambahkan');
+      expect(response.body.data.food.name).toBe('ayam geprek pedas');
+      expect(response.body.data.food.description).toBe(
+        'ayam geprek pedas description',
+      );
+      expect(response.body.data.food.price).toBe(20000);
+      expect(response.body.data.food.image).toBeDefined();
+    });
+
+    it('Should be success test when creating a food with image (FORMAT FILE : JPEG)', async () => {
+      const filePath = path.resolve(__dirname, '..', 'upload');
+      const pickImage = path.resolve(filePath, 'testing-jpeg.jpeg');
+
+      const response = await request(app.getHttpServer())
+        .post('/api/create-food')
+        .attach('image', pickImage)
+        .field('foodName', 'ayam geprek pedas')
+        .field('description', 'ayam geprek pedas description')
+        .field('price', 20000)
+        .field('category', 'Junk food');
+
+      logger.info(response.body);
+      expect(response.status).toBe(201);
+      expect(response.body.data.message).toBe('Data Berhasil ditambahkan');
+      expect(response.body.data.food.name).toBe('ayam geprek pedas');
+      expect(response.body.data.food.description).toBe(
+        'ayam geprek pedas description',
+      );
+      expect(response.body.data.food.price).toBe(20000);
+      expect(response.body.data.food.image).toBeDefined();
+    });
+
+    it('Should be invalid test when creating a food without image', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/create-food')
+        .attach('image', '')
+        .field('foodName', 'ayam geprek pedas')
+        .field('description', 'ayam geprek pedas description')
+        .field('price', 20000)
+        .field('category', 'Junk food');
+
+      logger.info(response.body);
+      expect(response.status).toBe(400);
+      expect(response.body.errors).toBe('Image not valid');
+    });
+
+    it('Should be invalid test when creating a food with image (FORMAT FILE : SVG)', async () => {
+      const filePath = path.resolve(__dirname, '..', 'upload');
+      const pickImage = path.resolve(filePath, 'testing-svg.svg');
+
+      const response = await request(app.getHttpServer())
+        .post('/api/create-food')
+        .attach('image', pickImage)
+        .field('foodName', 'ayam geprek pedas')
+        .field('description', 'ayam geprek pedas description')
+        .field('price', 20000)
+        .field('category', 'Junk food');
+
+      logger.info(response.body);
+      expect(response.status).toBe(400);
+      expect(response.body.errors).toBe('Image not valid');
     });
 
     it('Should be an invalid test when creating a food (Foodname,Description,Category : Character less than 1, Price : number lower than 1000)', async () => {
