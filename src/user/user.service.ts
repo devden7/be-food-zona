@@ -39,6 +39,6 @@ export class UserService {
       data: validateRequest,
     });
 
-    return results;
+    return { username: results.username, name: results.name };
   }
 }
