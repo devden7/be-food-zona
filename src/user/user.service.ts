@@ -4,7 +4,11 @@ import { Logger } from 'winston';
 import * as bcrypt from 'bcrypt';
 import { PrismaServices } from '../common/prisma.service';
 import { ValidationService } from '../common/validation.service';
-import { IRegisterUser, IReponseUser } from '../model/user.model';
+import {
+  IRegisterUser,
+  IReponseUser,
+  IRequestLoginUser,
+} from '../model/user.model';
 import { UserValidation } from './user.validation';
 
 Injectable();
@@ -40,5 +44,44 @@ export class UserService {
     });
 
     return { username: results.username, name: results.name };
+  }
+
+  async loginUser(request: IRequestLoginUser): Promise<IReponseUser> {
+    this.logger.info('Login User ' + JSON.stringify(request));
+
+    const validateRequest = await this.validationService.validate(
+      UserValidation.LOGIN_USER,
+      request,
+    );
+
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username: validateRequest.username,
+      },
+    });
+
+    if (!user) {
+      throw new HttpException('Username or password is invalid', 401);
+    }
+
+    const password = await bcrypt.compare(
+      validateRequest.password,
+      user.password,
+    );
+
+    if (!password) {
+      throw new HttpException('Username or password is invalid', 401);
+    }
+
+    const findRestaurant = await this.prismaService.restaurant.findUnique({
+      where: { username: user.username },
+    });
+
+    return {
+      name: user.name,
+      username: user.name,
+      restaurant:
+        findRestaurant !== null ? findRestaurant.restaurantName : null,
+    };
   }
 }

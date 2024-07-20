@@ -11,4 +11,9 @@ export class UserValidation {
       message: 'Please avoid using spaces in this input.',
       path: ['username'],
     });
+
+  static readonly LOGIN_USER: ZodType = z.object({
+    username: z.string().min(1).max(20),
+    password: z.string().min(6).max(20),
+  });
 }
