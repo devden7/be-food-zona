@@ -49,7 +49,7 @@ export class UserService {
   async loginUser(request: IRequestLoginUser): Promise<IReponseUser> {
     this.logger.info('Login User ' + JSON.stringify(request));
 
-    const validateRequest = await this.validationService.validate(
+    const validateRequest = this.validationService.validate(
       UserValidation.LOGIN_USER,
       request,
     );
