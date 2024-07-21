@@ -10,6 +10,7 @@ import {
   IRequestLoginUser,
 } from '../model/user.model';
 import { UserValidation } from './user.validation';
+import { JwtService } from '@nestjs/jwt';
 
 Injectable();
 export class UserService {
@@ -17,6 +18,7 @@ export class UserService {
     private prismaService: PrismaServices,
     private validationService: ValidationService,
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
+    private jwtService: JwtService,
   ) {}
 
   async registerUser(request: IRegisterUser): Promise<IReponseUser> {
@@ -82,6 +84,12 @@ export class UserService {
       username: user.name,
       restaurant:
         findRestaurant !== null ? findRestaurant.restaurantName : null,
+      token: await this.jwtService.signAsync({
+        name: user.name,
+        username: user.username,
+        restaurant:
+          findRestaurant !== null ? findRestaurant.restaurantName : null,
+      }),
     };
   }
 }
