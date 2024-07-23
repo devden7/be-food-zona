@@ -21,7 +21,7 @@ describe('RestaurantController Test', () => {
   });
 
   describe('POST Create Restaurant : /api/create-restaurant', () => {
-    it('Should be succsess test when creating a restaurant', async () => {
+    it('Should be success test when creating a restaurant', async () => {
       const response = await request(app.getHttpServer())
         .post('/api/register-restaurant')
         .send({
@@ -33,6 +33,19 @@ describe('RestaurantController Test', () => {
       expect(response.status).toBe(201);
       expect(response.body.data.username).toBe('test1');
       expect(response.body.data.restaurantName).toBe('Restaurant ayam geprek');
+    });
+
+    it('Should be an invalid test when creating a restaurant (User have a restaurant)', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/register-restaurant')
+        .send({
+          restaurantName: 'Restaurant ayam geprekk',
+          city: 'Jakarta',
+        });
+
+      logger.info(response.body);
+      expect(response.status).toBe(400);
+      expect(response.body.errors).toBe('You can only have 1 restaurant');
     });
 
     it('Should be an invalid test when creating a restaurant (Restaurant: duplicate restaurant name)', async () => {
