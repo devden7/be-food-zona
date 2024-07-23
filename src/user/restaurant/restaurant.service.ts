@@ -27,7 +27,7 @@ export class RestaurantService {
     );
 
     const checkUserRestaurant = await this.prismaService.restaurant.findUnique({
-      where: { username: 'test1' },
+      where: { username: request.user.username },
     });
 
     if (checkUserRestaurant) {
@@ -56,7 +56,7 @@ export class RestaurantService {
     const insertDataRestaurant = await this.prismaService.restaurant.create({
       data: {
         restaurantName: validateRequest.restaurantName,
-        username: 'test1', // STILL HARD-CODED
+        username: request.user.username,
         city_name: insertDataCity.city_name,
       },
       include: {
@@ -67,7 +67,7 @@ export class RestaurantService {
 
     return {
       restaurantName: insertDataRestaurant.restaurantName,
-      username: 'test1', // STILL HARD-CODED
+      username: insertDataRestaurant.username,
     };
   }
 }

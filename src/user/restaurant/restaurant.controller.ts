@@ -5,6 +5,7 @@ import {
   IResponseRestaurant,
 } from 'src/model/restaurant.model';
 import { IResponseFE } from 'src/model/web.model';
+import { Auth } from 'src/common/auth.decorator';
 
 @Controller('/api')
 export class RestaurantController {
@@ -12,9 +13,13 @@ export class RestaurantController {
 
   @Post('/register-restaurant')
   async createRestaurant(
+    @Auth() user,
     @Body() request: IRegisterRestaurant,
   ): Promise<IResponseFE<IResponseRestaurant>> {
-    const response = await this.restaurantService.registerRestaurant(request);
+    const response = await this.restaurantService.registerRestaurant({
+      user,
+      ...request,
+    });
     return { data: response };
   }
 }
