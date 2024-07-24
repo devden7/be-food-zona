@@ -5,6 +5,7 @@ export interface IRequestFormFood {
   fileImage?: Image | undefined;
   category?: string;
   image?: string;
+  userRestaurant: string;
 }
 
 export interface Image {

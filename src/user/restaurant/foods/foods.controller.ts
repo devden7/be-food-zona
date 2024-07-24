@@ -21,6 +21,7 @@ import {
 } from 'src/model/foods.model';
 import { IResponseFE } from 'src/model/web.model';
 import { IMAGE_MULTER_CONFIG } from './config.multer';
+import { Auth } from 'src/common/auth.decorator';
 
 @Controller('/api')
 export class FoodsController {
@@ -29,11 +30,13 @@ export class FoodsController {
   @Post('/create-food')
   @UseInterceptors(FileInterceptor('image', IMAGE_MULTER_CONFIG))
   async createFood(
+    @Auth() user,
     @Body() request: IRequestFormFood,
     @UploadedFile() fileImage: Express.Multer.File,
   ): Promise<IResponseFE<IResponseFormFood>> {
     request.price = Number(request.price);
     const response = await this.foodService.createFood({
+      userRestaurant: user.restaurant,
       fileImage,
       ...request,
     });

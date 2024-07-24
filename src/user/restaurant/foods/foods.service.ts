@@ -51,7 +51,7 @@ export class FoodsService {
             },
           ],
         },
-        restaurantName: 'Restaurant ayam geprek', // STILL HARD-CODED
+        restaurantName: request.userRestaurant,
       },
       include: { restaurant: true },
     });
