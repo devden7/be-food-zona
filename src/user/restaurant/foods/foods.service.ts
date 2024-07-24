@@ -20,9 +20,9 @@ export class FoodsService {
 
   async createFood(request: IRequestFormFood): Promise<IResponseFormFood> {
     this.logger.info('Create product ' + JSON.stringify(request));
-
     const validateFileImage = this.validationService.fileFilter(
       request.fileImage,
+      request.image,
     );
 
     const validationRequest = this.validationService.validate(

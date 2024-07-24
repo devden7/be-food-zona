@@ -7,9 +7,16 @@ export class ValidationService {
     return zodType.parse(data);
   }
 
-  fileFilter(file) {
+  fileFilter(file, imgBody: string) {
+    if (imgBody === '') {
+      return null;
+    }
+
     if (file === undefined) {
-      throw new HttpException('Image not valid', 400);
+      throw new HttpException(
+        'Only .jpg, .jpeg, and .png  formats are supported.',
+        400,
+      );
     }
 
     if (

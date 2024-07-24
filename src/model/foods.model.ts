@@ -4,6 +4,7 @@ export interface IRequestFormFood {
   price: number;
   fileImage?: Image | undefined;
   category?: string;
+  image?: string;
 }
 
 export interface Image {
