@@ -67,9 +67,9 @@ export class FoodsService {
     };
   }
 
-  async findRestaurantFoods() {
+  async findRestaurantFoods(userRestaurant: string | null) {
     const results = await this.prismaService.food.findMany({
-      where: { restaurantName: 'Restaurant ayam penyet' }, // STILL HARD-CODED
+      where: { restaurantName: userRestaurant },
     });
     return { foods: results };
   }

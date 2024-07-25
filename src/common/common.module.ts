@@ -1,8 +1,10 @@
 import { Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { WinstonModule } from 'nest-winston';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import * as winston from 'winston';
+import { join } from 'path';
 
 import { PrismaServices } from './prisma.service';
 import { ValidationService } from './validation.service';
@@ -30,6 +32,10 @@ import { AuthMiddleware } from './auth.middleware';
       signOptions: {
         expiresIn: '24h',
       },
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../../'),
+      renderPath: 'images',
     }),
   ],
   providers: [

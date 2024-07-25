@@ -44,8 +44,10 @@ export class FoodsController {
   }
 
   @Get('/restaurant-foods')
-  async findFoodByRestaurant(): Promise<IResponseFE<IResponseGetFoods>> {
-    const results = await this.foodService.findRestaurantFoods();
+  async findFoodByRestaurant(
+    @Auth() user,
+  ): Promise<IResponseFE<IResponseGetFoods>> {
+    const results = await this.foodService.findRestaurantFoods(user.restaurant);
     return { data: results };
   }
 
