@@ -28,11 +28,13 @@ export interface IRequestFormUpdateFood {
 
 export interface IResponseFormFood {
   message?: string;
-  food: {
+  foods: {
+    foodId?: number;
     name: string;
     description: string;
     price: number;
     image?: string | null;
+    restaurantName?: string;
   };
 }
 

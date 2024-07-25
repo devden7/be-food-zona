@@ -58,11 +58,13 @@ export class FoodsService {
 
     return {
       message: 'Data Berhasil ditambahkan',
-      food: {
+      foods: {
+        foodId: insertDataFoodAndCategory.foodId,
         name: insertDataFoodAndCategory.name,
         description: insertDataFoodAndCategory.description,
         price: insertDataFoodAndCategory.price,
         image: insertDataFoodAndCategory.image,
+        restaurantName: insertDataFoodAndCategory.restaurantName,
       },
     };
   }
@@ -104,7 +106,7 @@ export class FoodsService {
     });
     return {
       message: 'Data Berhasil diupdated',
-      food: {
+      foods: {
         name: updateFood.name,
         description: updateFood.description,
         price: updateFood.price,
@@ -140,7 +142,7 @@ export class FoodsService {
 
     return {
       message: 'Data Berhasil dihapus',
-      food: {
+      foods: {
         name: deleteFood.name,
         description: deleteFood.description,
         price: deleteFood.price,
