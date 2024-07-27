@@ -24,6 +24,10 @@ export interface IRequestFormUpdateFood {
   foodName: string;
   description: string;
   price: number;
+  fileImage?: Image | undefined;
+  category?: string;
+  image?: string;
+  userRestaurant: string;
 }
 
 export interface IResponseFormFood {

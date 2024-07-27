@@ -111,17 +111,22 @@ export class FoodsService {
   async editFood(request: IRequestFormUpdateFood): Promise<IResponseFormFood> {
     this.logger.info('Edit Food:' + JSON.stringify(request));
 
+    const validateFileImage = this.validationService.fileFilter(
+      request.fileImage,
+      request.image,
+    );
+
     const validationRequest = this.validationService.validate(
       FoodValidaton.UPDATE_FORM_FOOD,
       request,
     );
 
-    const { foodName, description, price } = validationRequest;
+    const { foodName, description, price, image } = validationRequest;
 
     const findFood = await this.prismaService.food.findUnique({
       where: {
         foodId: request.foodId,
-        restaurantName: 'Restaurant ayam geprek', // STILL HARD-CODED
+        restaurantName: request.userRestaurant, // STILL HARD-CODED
       },
     });
 
@@ -132,16 +137,20 @@ export class FoodsService {
     const updateFood = await this.prismaService.food.update({
       where: {
         foodId: findFood.foodId,
-        restaurantName: 'Restaurant ayam geprek', // STILL HARD-CODED
+        restaurantName: findFood.restaurantName, // STILL HARD-CODED
       },
-      data: { name: foodName, description, price },
+      data: { name: foodName, description, price, image: validateFileImage },
     });
+
     return {
       message: 'Data Berhasil diupdated',
       foods: {
+        foodId: updateFood.foodId,
         name: updateFood.name,
         description: updateFood.description,
         price: updateFood.price,
+        image: updateFood.image,
+        restaurantName: updateFood.restaurantName,
       },
     };
   }

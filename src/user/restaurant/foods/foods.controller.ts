@@ -11,7 +11,7 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Express } from 'express';
+import { Express, request } from 'express';
 import { FoodsService } from './foods.service';
 import {
   IRequestFormFood,
@@ -52,11 +52,20 @@ export class FoodsController {
   }
 
   @Put(`/update/:foodId`)
+  @UseInterceptors(FileInterceptor('image', IMAGE_MULTER_CONFIG))
   async updateFoodById(
+    @Auth() user,
     @Param('foodId', ParseIntPipe) foodId: number,
     @Body() request: IRequestFormUpdateFood,
+    @UploadedFile() fileImage: Express.Multer.File,
   ): Promise<IResponseFE<IResponseFormFood>> {
-    const results = await this.foodService.editFood({ foodId, ...request });
+    request.price = Number(request.price);
+    const results = await this.foodService.editFood({
+      foodId,
+      fileImage,
+      userRestaurant: user.restaurant,
+      ...request,
+    });
     return { data: results };
   }
   @Delete('/delete/:foodId')
