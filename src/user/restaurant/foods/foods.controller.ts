@@ -70,9 +70,10 @@ export class FoodsController {
   }
   @Delete('/delete/:foodId')
   async deleteById(
+    @Auth() user,
     @Param('foodId', ParseIntPipe) foodId: number,
   ): Promise<IResponseFE<IResponseFormFood>> {
-    const results = await this.foodService.deleteFood(foodId);
+    const results = await this.foodService.deleteFood(foodId, user.restaurant);
     return { data: results };
   }
 }

@@ -155,13 +155,16 @@ export class FoodsService {
     };
   }
 
-  async deleteFood(paramsId: number): Promise<IResponseFormFood> {
+  async deleteFood(
+    paramsId: number,
+    userRestaurant: string,
+  ): Promise<IResponseFormFood> {
     this.logger.info('Delete food : ' + JSON.stringify(paramsId));
 
     const findFood = await this.prismaService.food.findUnique({
       where: {
         foodId: paramsId,
-        restaurantName: 'Restaurant ayam geprek', // STILL HARD-CODED
+        restaurantName: userRestaurant,
       },
     });
 
@@ -187,6 +190,8 @@ export class FoodsService {
         name: deleteFood.name,
         description: deleteFood.description,
         price: deleteFood.price,
+        image: deleteFood.image,
+        restaurantName: deleteFood.restaurantName,
       },
     };
   }
