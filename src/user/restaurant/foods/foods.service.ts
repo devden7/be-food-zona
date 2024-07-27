@@ -9,9 +9,6 @@ import {
   IResponseFormFood,
 } from 'src/model/foods.model';
 import { FoodValidaton } from './foods.validation';
-import { request } from 'http';
-import { async } from 'rxjs';
-import { number } from 'zod';
 
 @Injectable()
 export class FoodsService {
@@ -74,8 +71,16 @@ export class FoodsService {
 
   async findRestaurantFoods(userRestaurant: string | null) {
     const results = await this.prismaService.food.findMany({
-      where: { restaurantName: userRestaurant },
-      include: {
+      where: {
+        restaurantName: userRestaurant,
+      },
+      select: {
+        foodId: true,
+        name: true,
+        description: true,
+        price: true,
+        restaurantName: true,
+        image: true,
         category: {
           select: {
             category: {
@@ -87,7 +92,20 @@ export class FoodsService {
         },
       },
     });
-    return { foods: results };
+
+    const finalResult = results.map((food) => {
+      return {
+        foodId: food.foodId,
+        name: food.name,
+        description: food.description,
+        price: food.price,
+        restaurantName: food.restaurantName,
+        image: food.image,
+        category: food.category.map((value) => value.category.name),
+      };
+    });
+
+    return { foods: finalResult };
   }
 
   async editFood(request: IRequestFormUpdateFood): Promise<IResponseFormFood> {
