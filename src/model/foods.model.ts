@@ -56,4 +56,5 @@ export interface IResponseGetFoods {
 export interface IReqFoodsLists {
   city: string;
   category: string;
+  limit?: number;
 }

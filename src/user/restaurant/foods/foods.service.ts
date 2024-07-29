@@ -202,6 +202,7 @@ export class FoodsService {
 
   async getFoodlists(request: IReqFoodsLists): Promise<IFoodLists[]> {
     this.logger.info('Foods Lists : ' + request);
+    const limitFoods = request.limit ? request.limit : undefined;
     const query = await this.prismaService.food.findMany({
       where: {
         restaurant: { city_name: request.city.toLowerCase() },
@@ -223,6 +224,7 @@ export class FoodsService {
           },
         },
       },
+      take: limitFoods,
     });
     const finalResultQuery = query.map((food) => {
       return {
