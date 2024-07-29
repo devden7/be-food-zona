@@ -52,3 +52,8 @@ export interface dataFood {
 export interface IResponseGetFoods {
   foods: dataFood[];
 }
+
+export interface IFoodsLists {
+  city: string;
+  category: string;
+}

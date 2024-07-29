@@ -11,9 +11,10 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Express, request } from 'express';
+import { Express } from 'express';
 import { FoodsService } from './foods.service';
 import {
+  IFoodsLists,
   IRequestFormFood,
   IRequestFormUpdateFood,
   IResponseFormFood,
@@ -21,7 +22,7 @@ import {
 } from 'src/model/foods.model';
 import { IResponseFE } from 'src/model/web.model';
 import { IMAGE_MULTER_CONFIG } from './config.multer';
-import { Auth } from 'src/common/auth.decorator';
+import { Auth } from '../../../common/auth.decorator';
 
 @Controller('/api')
 export class FoodsController {
@@ -74,6 +75,13 @@ export class FoodsController {
     @Param('foodId', ParseIntPipe) foodId: number,
   ): Promise<IResponseFE<IResponseFormFood>> {
     const results = await this.foodService.deleteFood(foodId, user.restaurant);
+    return { data: results };
+  }
+
+  @Post('/foods')
+  async getFoodLists(@Body() request: IFoodsLists) {
+    const results = await this.foodService.getFoodlists(request);
+
     return { data: results };
   }
 }

@@ -5,7 +5,7 @@ import {
   IResponseRestaurant,
 } from 'src/model/restaurant.model';
 import { IResponseFE } from 'src/model/web.model';
-import { Auth } from 'src/common/auth.decorator';
+import { Auth } from '../../common/auth.decorator';
 
 @Controller('/api')
 export class RestaurantController {

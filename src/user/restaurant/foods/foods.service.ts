@@ -4,6 +4,7 @@ import { Logger } from 'winston';
 import { PrismaServices } from '../../../common/prisma.service';
 import { ValidationService } from '../../../common/validation.service';
 import {
+  IFoodsLists,
   IRequestFormFood,
   IRequestFormUpdateFood,
   IResponseFormFood,
@@ -194,5 +195,17 @@ export class FoodsService {
         restaurantName: deleteFood.restaurantName,
       },
     };
+  }
+
+  async getFoodlists(request: IFoodsLists) {
+    this.logger.info('Foods Lists : ' + request);
+    const findFoods = await this.prismaService.food.findMany({
+      where: {
+        restaurant: { city_name: request.city.toLowerCase() },
+      },
+      include: { restaurant: true },
+    });
+
+    return { message: 'Foods', foods: findFoods };
   }
 }

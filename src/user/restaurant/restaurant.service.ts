@@ -45,9 +45,9 @@ export class RestaurantService {
     }
 
     const insertDataCity = await this.prismaService.city.upsert({
-      where: { city_name: validateRequest.city },
+      where: { city_name: validateRequest.city.toLowerCase() },
       update: {},
-      create: { city_name: validateRequest.city },
+      create: { city_name: validateRequest.city.toLowerCase() },
       include: {
         restaurant: true,
       },
