@@ -14,7 +14,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
 import { FoodsService } from './foods.service';
 import {
-  IFoodsLists,
+  IReqFoodsLists,
   IRequestFormFood,
   IRequestFormUpdateFood,
   IResponseFormFood,
@@ -79,7 +79,7 @@ export class FoodsController {
   }
 
   @Post('/foods')
-  async getFoodLists(@Body() request: IFoodsLists) {
+  async getFoodLists(@Body() request: IReqFoodsLists) {
     const results = await this.foodService.getFoodlists(request);
 
     return { data: results };

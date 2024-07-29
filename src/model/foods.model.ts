@@ -53,7 +53,7 @@ export interface IResponseGetFoods {
   foods: dataFood[];
 }
 
-export interface IFoodsLists {
+export interface IReqFoodsLists {
   city: string;
   category: string;
 }

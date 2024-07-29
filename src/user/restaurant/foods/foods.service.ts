@@ -4,12 +4,13 @@ import { Logger } from 'winston';
 import { PrismaServices } from '../../../common/prisma.service';
 import { ValidationService } from '../../../common/validation.service';
 import {
-  IFoodsLists,
+  IReqFoodsLists,
   IRequestFormFood,
   IRequestFormUpdateFood,
   IResponseFormFood,
 } from 'src/model/foods.model';
 import { FoodValidaton } from './foods.validation';
+import { IFoodLists } from 'src/model/user.model';
 
 @Injectable()
 export class FoodsService {
@@ -33,45 +34,47 @@ export class FoodsService {
 
     const { foodName, description, price, category } = validationRequest;
 
-    const insertDataCategories = await this.prismaService.category.upsert({
+    const insertDataCategoriesQuery = await this.prismaService.category.upsert({
       where: { name: category },
       create: { name: category },
       update: {},
     });
 
-    const insertDataFoodAndCategory = await this.prismaService.food.create({
-      data: {
-        name: foodName,
-        description,
-        price,
-        image: validateFileImage,
-        category: {
-          create: [
-            {
-              categoryId: insertDataCategories.categoryId,
-            },
-          ],
+    const insertDataFoodAndCategoryQuery = await this.prismaService.food.create(
+      {
+        data: {
+          name: foodName,
+          description,
+          price,
+          image: validateFileImage,
+          category: {
+            create: [
+              {
+                categoryId: insertDataCategoriesQuery.categoryId,
+              },
+            ],
+          },
+          restaurantName: request.userRestaurant,
         },
-        restaurantName: request.userRestaurant,
+        include: { restaurant: true },
       },
-      include: { restaurant: true },
-    });
+    );
 
     return {
       message: 'Data Berhasil ditambahkan',
       foods: {
-        foodId: insertDataFoodAndCategory.foodId,
-        name: insertDataFoodAndCategory.name,
-        description: insertDataFoodAndCategory.description,
-        price: insertDataFoodAndCategory.price,
-        image: insertDataFoodAndCategory.image,
-        restaurantName: insertDataFoodAndCategory.restaurantName,
+        foodId: insertDataFoodAndCategoryQuery.foodId,
+        name: insertDataFoodAndCategoryQuery.name,
+        description: insertDataFoodAndCategoryQuery.description,
+        price: insertDataFoodAndCategoryQuery.price,
+        image: insertDataFoodAndCategoryQuery.image,
+        restaurantName: insertDataFoodAndCategoryQuery.restaurantName,
       },
     };
   }
 
   async findRestaurantFoods(userRestaurant: string | null) {
-    const results = await this.prismaService.food.findMany({
+    const findFoodQuery = await this.prismaService.food.findMany({
       where: {
         restaurantName: userRestaurant,
       },
@@ -94,7 +97,7 @@ export class FoodsService {
       },
     });
 
-    const finalResult = results.map((food) => {
+    const finalResultQuery = findFoodQuery.map((food) => {
       return {
         foodId: food.foodId,
         name: food.name,
@@ -106,7 +109,7 @@ export class FoodsService {
       };
     });
 
-    return { foods: finalResult };
+    return { foods: finalResultQuery };
   }
 
   async editFood(request: IRequestFormUpdateFood): Promise<IResponseFormFood> {
@@ -122,23 +125,23 @@ export class FoodsService {
       request,
     );
 
-    const { foodName, description, price, image } = validationRequest;
+    const { foodName, description, price } = validationRequest;
 
-    const findFood = await this.prismaService.food.findUnique({
+    const findFoodQuery = await this.prismaService.food.findUnique({
       where: {
         foodId: request.foodId,
-        restaurantName: request.userRestaurant, // STILL HARD-CODED
+        restaurantName: request.userRestaurant,
       },
     });
 
-    if (!findFood) {
+    if (!findFoodQuery) {
       throw new HttpException('Food not found', 404);
     }
 
-    const updateFood = await this.prismaService.food.update({
+    const updateFoodQuery = await this.prismaService.food.update({
       where: {
-        foodId: findFood.foodId,
-        restaurantName: findFood.restaurantName, // STILL HARD-CODED
+        foodId: findFoodQuery.foodId,
+        restaurantName: findFoodQuery.restaurantName,
       },
       data: { name: foodName, description, price, image: validateFileImage },
     });
@@ -146,12 +149,12 @@ export class FoodsService {
     return {
       message: 'Data Berhasil diupdated',
       foods: {
-        foodId: updateFood.foodId,
-        name: updateFood.name,
-        description: updateFood.description,
-        price: updateFood.price,
-        image: updateFood.image,
-        restaurantName: updateFood.restaurantName,
+        foodId: updateFoodQuery.foodId,
+        name: updateFoodQuery.name,
+        description: updateFoodQuery.description,
+        price: updateFoodQuery.price,
+        image: updateFoodQuery.image,
+        restaurantName: updateFoodQuery.restaurantName,
       },
     };
   }
@@ -162,50 +165,76 @@ export class FoodsService {
   ): Promise<IResponseFormFood> {
     this.logger.info('Delete food : ' + JSON.stringify(paramsId));
 
-    const findFood = await this.prismaService.food.findUnique({
+    const findFoodQuery = await this.prismaService.food.findUnique({
       where: {
         foodId: paramsId,
         restaurantName: userRestaurant,
       },
     });
 
-    if (!findFood) {
+    if (!findFoodQuery) {
       throw new HttpException('Food not found', 404);
     }
 
     await this.prismaService.foodCategory.deleteMany({
       where: {
-        foodId: findFood.foodId,
+        foodId: findFoodQuery.foodId,
       },
     });
 
-    const deleteFood = await this.prismaService.food.delete({
+    const deletedFoodQuery = await this.prismaService.food.delete({
       where: {
-        foodId: findFood.foodId,
+        foodId: findFoodQuery.foodId,
       },
     });
 
     return {
       message: 'Data Berhasil dihapus',
       foods: {
-        name: deleteFood.name,
-        description: deleteFood.description,
-        price: deleteFood.price,
-        image: deleteFood.image,
-        restaurantName: deleteFood.restaurantName,
+        name: deletedFoodQuery.name,
+        description: deletedFoodQuery.description,
+        price: deletedFoodQuery.price,
+        image: deletedFoodQuery.image,
+        restaurantName: deletedFoodQuery.restaurantName,
       },
     };
   }
 
-  async getFoodlists(request: IFoodsLists) {
+  async getFoodlists(request: IReqFoodsLists): Promise<IFoodLists[]> {
     this.logger.info('Foods Lists : ' + request);
-    const findFoods = await this.prismaService.food.findMany({
+    const query = await this.prismaService.food.findMany({
       where: {
         restaurant: { city_name: request.city.toLowerCase() },
       },
-      include: { restaurant: true },
+      select: {
+        foodId: true,
+        name: true,
+        description: true,
+        price: true,
+        restaurantName: true,
+        image: true,
+        category: {
+          select: {
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
     });
-
-    return { message: 'Foods', foods: findFoods };
+    const finalResultQuery = query.map((food) => {
+      return {
+        foodId: food.foodId,
+        name: food.name,
+        description: food.description,
+        price: food.price,
+        restaurantName: food.restaurantName,
+        image: food.image,
+        category: food.category.map((value) => value.category.name),
+      };
+    });
+    return finalResultQuery;
   }
 }
