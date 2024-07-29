@@ -186,7 +186,7 @@ describe('FoodController Test', () => {
     });
   });
 
-  describe('GET Foods lists : /api/foods', () => {
+  describe('GET Foods lists : /api/restaurant-foods', () => {
     it('Should be success test when creating a food', async () => {
       const response = await request(app.getHttpServer()).get(
         '/api/restaurant-foods',
@@ -306,6 +306,18 @@ describe('FoodController Test', () => {
 
       expect(response.status).toBe(404);
       expect(response.body.errors).toBe('Food not found');
+    });
+  });
+
+  describe('POST Foods Lists : /api/foods', () => {
+    it('Should be success test when POST foods Lists', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/foods')
+        .send({
+          city: 'Bandung',
+          category: 'near_me',
+        });
+      logger.info(response.body);
     });
   });
 });
