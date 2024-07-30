@@ -34,8 +34,6 @@ export class RestaurantService {
       throw new HttpException('You can only have 1 restaurant', 400);
     }
 
-    console.log(checkUserRestaurant);
-
     const checkRestaurantName = await this.prismaService.restaurant.count({
       where: { restaurantName: validateRequest.restaurantName },
     });

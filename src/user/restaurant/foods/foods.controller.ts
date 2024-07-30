@@ -79,8 +79,20 @@ export class FoodsController {
   }
 
   @Post('/foods')
-  async getFoodLists(@Body() request: IReqFoodsLists) {
+  async getFoodLists(
+    @Body() request: IReqFoodsLists,
+  ): Promise<IResponseFE<IResponseGetFoods>> {
     const results = await this.foodService.getFoodlists(request);
+
+    return { data: results };
+  }
+
+  @Get('foods/:restaurantName')
+  async getFoodDetail(
+    @Param('restaurantName') restaurantName: string,
+  ): Promise<IResponseFE<IResponseGetFoods>> {
+    const addSpaceParam = restaurantName.replace(/-/g, ' ');
+    const results = await this.foodService.getFoodListDetail(addSpaceParam);
 
     return { data: results };
   }

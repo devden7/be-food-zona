@@ -9,15 +9,6 @@ export interface IRequestLoginUser {
   password: string;
 }
 
-export interface IFoodLists {
-  foodId: number;
-  name: string;
-  description: string;
-  price: string | number;
-  category: string[];
-  reviws?: number;
-  image: string | null;
-}
 export interface IReponseUser {
   username: string;
   name: string;

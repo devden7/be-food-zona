@@ -51,6 +51,8 @@ export interface dataFood {
 
 export interface IResponseGetFoods {
   foods: dataFood[];
+  restaurantName?: string;
+  rating?: number;
 }
 
 export interface IReqFoodsLists {

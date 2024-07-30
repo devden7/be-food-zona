@@ -8,9 +8,9 @@ import {
   IRequestFormFood,
   IRequestFormUpdateFood,
   IResponseFormFood,
+  IResponseGetFoods,
 } from 'src/model/foods.model';
 import { FoodValidaton } from './foods.validation';
-import { IFoodLists } from 'src/model/user.model';
 
 @Injectable()
 export class FoodsService {
@@ -200,7 +200,7 @@ export class FoodsService {
     };
   }
 
-  async getFoodlists(request: IReqFoodsLists): Promise<IFoodLists[]> {
+  async getFoodlists(request: IReqFoodsLists): Promise<IResponseGetFoods> {
     this.logger.info('Foods Lists : ' + request);
     const limitFoods = request.limit ? request.limit : undefined;
     const query = await this.prismaService.food.findMany({
@@ -237,6 +237,66 @@ export class FoodsService {
         category: food.category.map((value) => value.category.name),
       };
     });
-    return finalResultQuery;
+    return { foods: finalResultQuery };
+  }
+
+  async getFoodListDetail(restaurantName: string): Promise<IResponseGetFoods> {
+    this.logger.info('Restaurant name : ' + JSON.stringify(restaurantName));
+
+    const findRestaurantQuery = await this.prismaService.restaurant.findFirst({
+      where: {
+        restaurantName: {
+          contains: restaurantName,
+          mode: 'insensitive',
+        },
+      },
+    });
+    console.log(findRestaurantQuery);
+    if (!findRestaurantQuery) {
+      throw new HttpException('Restaurant not found', 400);
+    }
+
+    const getFoodQuery = await this.prismaService.food.findMany({
+      where: {
+        restaurantName: {
+          contains: restaurantName,
+          mode: 'insensitive',
+        },
+      },
+      select: {
+        foodId: true,
+        name: true,
+        description: true,
+        price: true,
+        restaurantName: true,
+        image: true,
+        category: {
+          select: {
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const finalResultQuery = getFoodQuery.map((food) => {
+      return {
+        foodId: food.foodId,
+        name: food.name,
+        description: food.description,
+        price: food.price,
+        restaurantName: food.restaurantName,
+        image: food.image,
+        category: food.category.map((value) => value.category.name),
+      };
+    });
+    return {
+      foods: finalResultQuery,
+      restaurantName: restaurantName,
+      rating: 0,
+    };
   }
 }
