@@ -52,10 +52,19 @@ model Order {
   status String @db.VarChar(10)
   foodNameOrder String
   username String @db.VarChar(20)
-
+  orderItem OrderItem[]
   user User @relation(fields: [username], references: [username])
   review FoodReview?
   @@map("orders")
+}
+
+model OrderItem {
+  orderItemId Int @id @default(autoincrement())
+  foodId Int
+  orderId Int
+  food Food @relation(fields: [foodId],references: [foodId])
+  Order Order @relation(fields: [orderId], references: [orderId])
+  @@map("order_item")
 }
 
 model FoodReview {
@@ -78,6 +87,7 @@ model Food {
   price Int 
   restaurantName String @db.VarChar(50)
   image String? @db.VarChar(250)
+  orderItem OrderItem[]
 
   category FoodCategory[]
   restaurant Restaurant @relation(fields: [restaurantName], references: [restaurantName])
