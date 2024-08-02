@@ -33,6 +33,7 @@ model Restaurant {
   city_name String 
 
   food Food[]
+  order Order[]
   city City @relation(fields: [city_name], references: [city_name])
   user User @relation(fields: [username], references: [username])
 
@@ -53,7 +54,10 @@ model Order {
   foodNameOrder String
   username String @db.VarChar(20)
   orderItem OrderItem[]
+  restaurantName String
+
   user User @relation(fields: [username], references: [username])
+  restaurant Restaurant @relation(fields: [restaurantName], references: [restaurantName])
   review FoodReview?
   @@map("orders")
 }
