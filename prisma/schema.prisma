@@ -51,7 +51,6 @@ model Order {
   orderId Int @id @default(autoincrement())
   totalPrice Int
   status String @db.VarChar(10)
-  foodNameOrder String
   username String @db.VarChar(20)
   orderItem OrderItem[]
   restaurantName String
@@ -64,6 +63,7 @@ model Order {
 
 model OrderItem {
   orderItemId Int @id @default(autoincrement())
+  foodNameOrder String
   foodId Int
   orderId Int
   food Food @relation(fields: [foodId],references: [foodId])
