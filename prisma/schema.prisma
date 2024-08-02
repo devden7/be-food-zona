@@ -52,10 +52,8 @@ model Order {
   status String @db.VarChar(10)
   foodNameOrder String
   username String @db.VarChar(20)
-  foodId Int
 
   user User @relation(fields: [username], references: [username])
-  food Food @relation(fields: [foodId], references: [foodId])
   review FoodReview?
   @@map("orders")
 }
@@ -82,7 +80,6 @@ model Food {
   image String? @db.VarChar(250)
 
   category FoodCategory[]
-  order Order[]
   restaurant Restaurant @relation(fields: [restaurantName], references: [restaurantName])
 
   @@map("foods")
