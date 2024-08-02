@@ -1,7 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { IReqOrder, IResOrder } from 'src/model/order.model';
-import { response } from 'express';
 import { Auth } from 'src/common/auth.decorator';
 import { IResponseFE } from 'src/model/web.model';
 
@@ -19,5 +18,14 @@ export class OrderContoller {
       username: user.username,
     });
     return { data: response };
+  }
+
+  @Get('/orders-restaurant')
+  async getOrdersRestaurant(@Auth() user) {
+    const response = await this.orderService.getOrdersRestaurant(
+      user.restaurant,
+    );
+
+    return response;
   }
 }
