@@ -50,6 +50,7 @@ model City {
 model Order {
   orderId Int @id @default(autoincrement())
   totalPrice Int
+  totalQuantity Int
   status String @db.VarChar(10)
   username String @db.VarChar(20)
   orderItem OrderItem[]
