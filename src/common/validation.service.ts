@@ -1,4 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
+import { IReqOrderValidation } from 'src/model/order.model';
 import { ZodType } from 'zod';
 
 @Injectable()
@@ -26,5 +27,46 @@ export class ValidationService {
     ) {
       return file.filename;
     }
+  }
+
+  validationOrder(request: IReqOrderValidation): IReqOrderValidation {
+    let totalQuantity = 0;
+    let calcPriceItem = 0;
+    const PAJAK = 11000;
+    const { items, itemsBody, idArr } = request;
+    const validId = items.map((item) => item.foodId);
+
+    const idNotFound = idArr.filter((id) => !validId.includes(id));
+
+    if (idNotFound.length > 0) {
+      throw new HttpException('Order not valid!', 400);
+    }
+
+    for (let j = 0; j < items.length; j++) {
+      if (
+        items[j].foodId !== itemsBody[j].foodId ||
+        items[j].name !== itemsBody[j].name ||
+        items[j].description !== itemsBody[j].description ||
+        items[j].price !== itemsBody[j].price ||
+        items[j].restaurantName !== itemsBody[j].restaurantName ||
+        items[j].image !== itemsBody[j].image
+      ) {
+        throw new HttpException('Order not valid!', 400);
+      } else {
+        totalQuantity = totalQuantity + itemsBody[j].quantity;
+        calcPriceItem =
+          calcPriceItem + itemsBody[j].price * itemsBody[j].quantity;
+      }
+    }
+
+    if (
+      totalQuantity !== request.totalQuantityBody ||
+      calcPriceItem + PAJAK !== request.calcPriceItemBody + PAJAK
+    ) {
+      throw new HttpException('Order not valid!', 400);
+    }
+
+    const totalPrice = calcPriceItem + PAJAK;
+    return { items, calcPriceItem: totalPrice, totalQuantity };
   }
 }

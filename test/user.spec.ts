@@ -67,8 +67,6 @@ describe('UserController Test', () => {
           password: '123456',
         });
 
-      // logger.info(response.body)
-      console.log(response.body.errors);
       expect(response.status).toBe(400);
       expect(response.body.errors[0].path[0]).toBe('username');
     });

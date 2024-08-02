@@ -251,7 +251,7 @@ export class FoodsService {
         },
       },
     });
-    console.log(findRestaurantQuery);
+
     if (!findRestaurantQuery) {
       throw new HttpException('Restaurant not found', 400);
     }

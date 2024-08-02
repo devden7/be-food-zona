@@ -47,6 +47,11 @@ export interface dataFood {
   name: string;
   description: string;
   price: number;
+  category?: string[];
+  image?: string | null;
+  restaurantName?: string;
+  totalPrice?: number;
+  quantity?: number;
 }
 
 export interface IResponseGetFoods {
