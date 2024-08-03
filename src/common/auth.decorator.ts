@@ -10,6 +10,8 @@ export const Auth = createParamDecorator(
     const user = request.user;
     if (user) {
       return user;
+    } else {
+      throw new UnauthorizedException();
     }
   },
 );

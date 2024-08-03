@@ -1,7 +1,7 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { PrismaServices } from 'src/common/prisma.service';
-import { ValidationService } from 'src/common/validation.service';
+import { PrismaServices } from '../../common/prisma.service';
+import { ValidationService } from '../../common/validation.service';
 import {
   IReqOrder,
   IReqOrderValidation,

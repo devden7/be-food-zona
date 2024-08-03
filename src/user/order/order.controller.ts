@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { IReqOrder, IResOrder } from 'src/model/order.model';
-import { Auth } from 'src/common/auth.decorator';
+import { Auth } from '../../common/auth.decorator';
 import { IResponseFE } from 'src/model/web.model';
 
 @Controller('/api')
