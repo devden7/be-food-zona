@@ -205,7 +205,12 @@ export class FoodsService {
     const limitFoods = request.limit ? request.limit : undefined;
     const query = await this.prismaService.food.findMany({
       where: {
-        restaurant: { city_name: request.city.toLowerCase() },
+        restaurant: {
+          city_name: {
+            contains: request.city,
+            mode: 'insensitive',
+          },
+        },
       },
       select: {
         foodId: true,
