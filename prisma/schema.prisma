@@ -34,6 +34,7 @@ model Restaurant {
 
   food Food[]
   order Order[]
+  review FoodReview[]
   city City @relation(fields: [city_name], references: [city_name])
   user User @relation(fields: [username], references: [username])
 
@@ -75,13 +76,14 @@ model OrderItem {
 model FoodReview {
   username String
   orderId Int @unique
+  restaurantName String
   comment String
   rating Int
   createdAt DateTime @default(now())
 
-
 user User @relation(fields: [username], references: [username])
 order Order @relation(fields: [orderId], references: [orderId])
+restaurant Restaurant @relation(fields: [restaurantName], references: [restaurantName])
 @@map("food_reviews")
 }
 
