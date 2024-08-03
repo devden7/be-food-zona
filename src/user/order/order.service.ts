@@ -3,6 +3,7 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { PrismaServices } from '../../common/prisma.service';
 import { ValidationService } from '../../common/validation.service';
 import {
+  IOrderLists,
   IReqOrder,
   IReqOrderValidation,
   IResOrder,
@@ -74,7 +75,9 @@ export class OrderService {
     return { message: 'Order berhasil' };
   }
 
-  async getOrdersRestaurant(restaurantName: string) {
+  async getOrdersRestaurant(
+    restaurantName: string,
+  ): Promise<IOrderLists[] | []> {
     const findOrdersQuery = await this.prismaService.order.findMany({
       where: {
         restaurantName: restaurantName,
@@ -104,7 +107,10 @@ export class OrderService {
     return result;
   }
 
-  async deliveryFood(orderId: number, restaurantName: string) {
+  async deliveryFood(
+    orderId: number,
+    restaurantName: string,
+  ): Promise<IResOrder> {
     const findIdOrderRestaurantQuery =
       await this.prismaService.order.findUnique({
         where: {
@@ -133,7 +139,10 @@ export class OrderService {
     return { message: 'Makanan berhasil dikirim!' };
   }
 
-  async cancelFood(orderId: number, restaurantName: string) {
+  async cancelFood(
+    orderId: number,
+    restaurantName: string,
+  ): Promise<IResOrder> {
     const findIdOrderRestaurantQuery =
       await this.prismaService.order.findUnique({
         where: {
@@ -162,7 +171,8 @@ export class OrderService {
     return { message: 'Makanan Dibatalkan!' };
   }
 
-  async getOrdersUser(username: string) {
+  async getOrdersUser(username: string): Promise<IOrderLists[] | []> {
+    this.logger.info('Order Lists User : ' + username);
     const findOrdersQuery = await this.prismaService.order.findMany({
       where: {
         username: username,
