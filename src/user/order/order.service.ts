@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { PrismaServices } from 'src/common/prisma.service';
 import { ValidationService } from 'src/common/validation.service';
@@ -105,11 +105,21 @@ export class OrderService {
   }
 
   async deliveryFood(orderId: number, restaurantName: string) {
-    const findOrder = await this.prismaService.order.findUnique({
+    const findIdOrderRestaurantQuery =
+      await this.prismaService.order.findUnique({
+        where: {
+          orderId: orderId,
+          restaurantName: restaurantName,
+        },
+      });
+
+    if (!findIdOrderRestaurantQuery) {
+      throw new HttpException('Order not found!', 404);
+    }
+
+    await this.prismaService.order.findUnique({
       where: { restaurantName: restaurantName, orderId: orderId },
     });
-
-    console.log(findOrder);
 
     await this.prismaService.order.update({
       where: {
@@ -121,5 +131,34 @@ export class OrderService {
     });
 
     return { message: 'Makanan berhasil dikirim!' };
+  }
+
+  async cancelFood(orderId: number, restaurantName: string) {
+    const findIdOrderRestaurantQuery =
+      await this.prismaService.order.findUnique({
+        where: {
+          orderId: orderId,
+          restaurantName: restaurantName,
+        },
+      });
+
+    if (!findIdOrderRestaurantQuery) {
+      throw new HttpException('Order not found!', 404);
+    }
+
+    await this.prismaService.order.findUnique({
+      where: { restaurantName: restaurantName, orderId: orderId },
+    });
+
+    await this.prismaService.order.update({
+      where: {
+        orderId: orderId,
+      },
+      data: {
+        status: 'Dibatalkan',
+      },
+    });
+
+    return { message: 'Makanan Dibatalkan!' };
   }
 }

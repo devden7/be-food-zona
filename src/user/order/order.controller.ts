@@ -48,4 +48,16 @@ export class OrderContoller {
     );
     return response;
   }
+
+  @Patch('/cancel-food/:orderId')
+  async cancelFood(
+    @Auth() user,
+    @Param('orderId', ParseIntPipe) orderId: number,
+  ) {
+    const response = await this.orderService.cancelFood(
+      orderId,
+      user.restaurant,
+    );
+    return response;
+  }
 }
