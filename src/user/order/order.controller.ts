@@ -60,4 +60,11 @@ export class OrderContoller {
     );
     return response;
   }
+
+  @Get('/orders-user')
+  async getOrdersUser(@Auth() user) {
+    const response = await this.orderService.getOrdersUser(user.username);
+
+    return response;
+  }
 }

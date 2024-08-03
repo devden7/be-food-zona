@@ -161,4 +161,34 @@ export class OrderService {
 
     return { message: 'Makanan Dibatalkan!' };
   }
+
+  async getOrdersUser(username: string) {
+    const findOrdersQuery = await this.prismaService.order.findMany({
+      where: {
+        username: username,
+      },
+      select: {
+        orderId: true,
+        restaurantName: true,
+        orderItem: {
+          select: {
+            orderItemId: true,
+            foodNameOrder: true,
+          },
+        },
+        totalPrice: true,
+        status: true,
+        username: true,
+        totalQuantity: true,
+        restaurant: {
+          select: {
+            city_name: true,
+          },
+        },
+      },
+    });
+
+    const result = findOrdersQuery.length > 0 ? findOrdersQuery : [];
+    return result;
+  }
 }
