@@ -103,4 +103,23 @@ export class OrderService {
     const result = findOrdersQuery.length > 0 ? findOrdersQuery : [];
     return result;
   }
+
+  async deliveryFood(orderId: number, restaurantName: string) {
+    const findOrder = await this.prismaService.order.findUnique({
+      where: { restaurantName: restaurantName, orderId: orderId },
+    });
+
+    console.log(findOrder);
+
+    await this.prismaService.order.update({
+      where: {
+        orderId: orderId,
+      },
+      data: {
+        status: 'Berhasil',
+      },
+    });
+
+    return { message: 'Makanan berhasil dikirim!' };
+  }
 }

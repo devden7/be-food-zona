@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { IReqOrder, IResOrder } from 'src/model/order.model';
 import { Auth } from 'src/common/auth.decorator';
@@ -26,6 +34,18 @@ export class OrderContoller {
       user.restaurant,
     );
 
+    return response;
+  }
+
+  @Patch('/delivery-food/:orderId')
+  async deliveryFood(
+    @Auth() user,
+    @Param('orderId', ParseIntPipe) orderId: number,
+  ) {
+    const response = await this.orderService.deliveryFood(
+      orderId,
+      user.restaurant,
+    );
     return response;
   }
 }
