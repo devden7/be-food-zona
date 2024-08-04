@@ -6,9 +6,11 @@ import {
   IOrderLists,
   IReqOrder,
   IReqOrderValidation,
+  IReqReviewForm,
   IResOrder,
 } from 'src/model/order.model';
 import { Logger } from 'winston';
+import { OrderValidation } from './order.validation';
 
 @Injectable()
 export class OrderService {
@@ -200,5 +202,48 @@ export class OrderService {
 
     const result = findOrdersQuery.length > 0 ? findOrdersQuery : [];
     return result;
+  }
+
+  async createReview(
+    request: IReqReviewForm,
+    username: string,
+    orderId: number,
+  ): Promise<IResOrder> {
+    this.logger.info('Reviews : ' + JSON.stringify(request));
+
+    const findOrder = await this.prismaService.order.findUnique({
+      where: {
+        orderId,
+        username,
+      },
+    });
+
+    if (!findOrder) {
+      throw new HttpException('Order not valid', 400);
+    }
+    const validationRequest = this.validationService.validate(
+      OrderValidation.FORM_REVIEW,
+      request,
+    );
+
+    const findOrderIdQuery = await this.prismaService.foodReview.findUnique({
+      where: {
+        orderId: findOrder.orderId,
+      },
+    });
+
+    if (findOrderIdQuery) {
+      throw new HttpException('You can only review it once', 400);
+    }
+    await this.prismaService.foodReview.create({
+      data: {
+        rating: validationRequest.rating,
+        comment: validationRequest.comment,
+        restaurantName: findOrder.restaurantName,
+        username: findOrder.username,
+        orderId: findOrder.orderId,
+      },
+    });
+    return { message: 'Your review has been submitted successfully' };
   }
 }

@@ -8,7 +8,12 @@ import {
   Post,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { IOrderLists, IReqOrder, IResOrder } from 'src/model/order.model';
+import {
+  IOrderLists,
+  IReqOrder,
+  IReqReviewForm,
+  IResOrder,
+} from 'src/model/order.model';
 import { Auth } from '../../common/auth.decorator';
 import { IResponseFE } from 'src/model/web.model';
 
@@ -67,6 +72,20 @@ export class OrderContoller {
   async getOrdersUser(@Auth() user): Promise<IResponseFE<IOrderLists[] | []>> {
     const response = await this.orderService.getOrdersUser(user.username);
 
+    return { data: response };
+  }
+
+  @Post('/review/:orderId')
+  async createReview(
+    @Body() request: IReqReviewForm,
+    @Auth() user,
+    @Param('orderId', ParseIntPipe) orderId: number,
+  ): Promise<IResponseFE<IResOrder>> {
+    const response = await this.orderService.createReview(
+      request,
+      user.username,
+      orderId,
+    );
     return { data: response };
   }
 }

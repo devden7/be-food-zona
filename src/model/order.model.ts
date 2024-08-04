@@ -7,6 +7,11 @@ export interface IReqOrder {
   username: string;
 }
 
+export interface IReqReviewForm {
+  rating: number;
+  comment: string;
+}
+
 export interface IResOrder {
   message: string;
 }

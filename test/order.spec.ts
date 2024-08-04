@@ -470,4 +470,107 @@ describe('OrderController Test', () => {
       expect(response.status).toBe(401);
     });
   });
+
+  describe('POST review food : /api/review/:orderId', () => {
+    it('Should be a success test when the user gives a reviews', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/review/26')
+        .send({
+          rating: 5,
+          comment: 'ENAKKKKK',
+        })
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
+
+      logger.info(response.body);
+      expect(response.status).toBe(201);
+      expect(response.body.data.message).toBe('Berhasil memberikan review');
+    });
+
+    it('Should be an invalid test when the user gives a reviews (User try post review more than 1)', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/review/26')
+        .send({
+          rating: 5,
+          comment: 'ENAKKKKK',
+        })
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
+
+      logger.info(response.body);
+      expect(response.status).toBe(400);
+      expect(response.body.errors).toBe(
+        'Kamu hanya bisa melakukan review 1 kali',
+      );
+    });
+
+    it('Should be an invalid test when the user gives a reviews (rating lower than 1)', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/review/26')
+        .send({
+          rating: 0,
+          comment: 'ENAKKKKK',
+        })
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
+
+      logger.info(response.body);
+      expect(response.status).toBe(400);
+      expect(response.body.errors[0].path[0]).toBe('rating');
+    });
+
+    it('Should be an invalid test when the user gives a reviews (rating greater than 5)', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/review/26')
+        .send({
+          rating: 6,
+          comment: 'ENAKKKKK',
+        })
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
+
+      logger.info(response.body);
+      expect(response.status).toBe(400);
+      expect(response.body.errors[0].path[0]).toBe('rating');
+    });
+
+    it('Should be an invalid test when the user gives a reviews (decimal number)', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/review/26')
+        .send({
+          rating: 4.5,
+          comment: 'ENAKKKKK',
+        })
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
+
+      logger.info(response.body);
+      expect(response.status).toBe(400);
+      expect(response.body.errors[0].path[0]).toBe('rating');
+    });
+
+    it('Should be an invalid test when the user gives a reviews (comment not value)', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/review/26')
+        .send({
+          rating: 5,
+          comment: '',
+        })
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
+
+      logger.info(response.body);
+      expect(response.status).toBe(400);
+      expect(response.body.errors[0].path[0]).toBe('comment');
+    });
+
+    it('Should be an invalid test when the user gives a reviews (Comment length more than 250 )', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/review/26')
+        .send({
+          rating: 5,
+          comment:
+            'GOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOODGOOD',
+        })
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
+
+      logger.info(response.body);
+      expect(response.status).toBe(400);
+      expect(response.body.errors[0].path[0]).toBe('comment');
+    });
+  });
 });
