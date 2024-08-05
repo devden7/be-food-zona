@@ -52,6 +52,7 @@ export interface dataFood {
   restaurantName?: string;
   totalPrice?: number;
   quantity?: number;
+  isRecommendation?: boolean;
 }
 
 export interface IResponseGetFoods {

@@ -85,6 +85,7 @@ export class FoodsService {
         price: true,
         restaurantName: true,
         image: true,
+        isRecommendation: true,
         category: {
           select: {
             category: {
@@ -105,11 +106,19 @@ export class FoodsService {
         price: food.price,
         restaurantName: food.restaurantName,
         image: food.image,
+        isRecommendation: food.isRecommendation,
         category: food.category.map((value) => value.category.name),
       };
     });
+    const sortFood = finalResultQuery.sort((a, b) => {
+      const foodA =
+        a.isRecommendation === true ? 1 : a.isRecommendation === false ? 0 : -1;
+      const foodB =
+        b.isRecommendation === true ? 1 : b.isRecommendation === false ? 0 : -1;
+      return foodB - foodA;
+    });
 
-    return { foods: finalResultQuery };
+    return { foods: sortFood };
   }
 
   async editFood(request: IRequestFormUpdateFood): Promise<IResponseFormFood> {
@@ -328,5 +337,47 @@ export class FoodsService {
       restaurantName: restaurantName,
       reviews: getFoodQuery[0].restaurant.review,
     };
+  }
+
+  async addRecommendationFoods(restaurantName: string, foodId: number) {
+    this.logger.info('Recommendation : ', restaurantName);
+
+    const findFoodQuery = await this.prismaService.food.findUnique({
+      where: {
+        foodId: foodId,
+        restaurantName: restaurantName,
+      },
+    });
+
+    if (!findFoodQuery) {
+      throw new HttpException('Food not found', 404);
+    }
+
+    const findFoodRecommendation = await this.prismaService.food.findFirst({
+      where: {
+        isRecommendation: true,
+      },
+    });
+
+    if (findFoodRecommendation) {
+      await this.prismaService.food.update({
+        where: {
+          foodId: findFoodRecommendation.foodId,
+        },
+        data: {
+          isRecommendation: false,
+        },
+      });
+    }
+    await this.prismaService.food.update({
+      where: {
+        foodId: foodId,
+      },
+      data: {
+        isRecommendation: true,
+      },
+    });
+
+    return { message: 'Successfully added food as a Recommendation' };
   }
 }

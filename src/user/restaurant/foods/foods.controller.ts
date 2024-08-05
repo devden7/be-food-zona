@@ -9,6 +9,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  Patch,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
@@ -95,5 +96,17 @@ export class FoodsController {
     const results = await this.foodService.getFoodListDetail(addSpaceParam);
 
     return { data: results };
+  }
+
+  @Patch('/add-recommendation/:foodId')
+  async addRecommendation(
+    @Auth() user,
+    @Param('foodId', ParseIntPipe) foodId: number,
+  ) {
+    const response = await this.foodService.addRecommendationFoods(
+      user.restaurant,
+      foodId,
+    );
+    return response;
   }
 }
