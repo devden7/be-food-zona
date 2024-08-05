@@ -295,6 +295,7 @@ export class FoodsService {
                 restaurantName: true,
                 order: {
                   select: {
+                    createAt: true,
                     orderItem: {
                       select: {
                         orderItemId: true,
