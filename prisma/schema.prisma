@@ -57,7 +57,7 @@ model Order {
   orderItem OrderItem[]
   restaurantName String
   createAt DateTime @default(now())
-  
+
   user User @relation(fields: [username], references: [username])
   restaurant Restaurant @relation(fields: [restaurantName], references: [restaurantName])
   review FoodReview?
@@ -97,7 +97,7 @@ model Food {
   restaurantName String @db.VarChar(50)
   image String? @db.VarChar(250)
   orderItem OrderItem[]
-
+  isRecommendation Boolean?
   category FoodCategory[]
   restaurant Restaurant @relation(fields: [restaurantName], references: [restaurantName])
 
