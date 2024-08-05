@@ -284,6 +284,30 @@ export class FoodsService {
             },
           },
         },
+        restaurant: {
+          select: {
+            review: {
+              select: {
+                reviewId: true,
+                username: true,
+                rating: true,
+                comment: true,
+                restaurantName: true,
+                order: {
+                  select: {
+                    orderItem: {
+                      select: {
+                        orderItemId: true,
+                        foodNameOrder: true,
+                      },
+                    },
+                  },
+                },
+                user: { select: { createAt: true } },
+              },
+            },
+          },
+        },
       },
     });
 
@@ -301,7 +325,7 @@ export class FoodsService {
     return {
       foods: finalResultQuery,
       restaurantName: restaurantName,
-      rating: 0,
+      reviews: getFoodQuery[0].restaurant.review,
     };
   }
 }
