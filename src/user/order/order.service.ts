@@ -30,6 +30,11 @@ export class OrderService {
 
     const findProductQuery = await this.prismaService.food.findMany({
       where: { foodId: { in: idItems } },
+      include: {
+        restaurant: {
+          select: { username: true },
+        },
+      },
     });
 
     const requestValidation: IReqOrderValidation = {
@@ -41,6 +46,10 @@ export class OrderService {
     };
     const validationRequest =
       this.validationService.validationOrder(requestValidation);
+
+    if (findProductQuery[0].restaurant.username === request.username) {
+      throw new HttpException("you can't order your food", 400);
+    }
 
     const dataForInsert = [];
 

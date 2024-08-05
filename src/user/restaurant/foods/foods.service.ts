@@ -228,6 +228,13 @@ export class FoodsService {
         price: true,
         restaurantName: true,
         image: true,
+        restaurant: {
+          select: {
+            review: {
+              select: { rating: true },
+            },
+          },
+        },
         category: {
           select: {
             category: {
@@ -248,6 +255,11 @@ export class FoodsService {
         price: food.price,
         restaurantName: food.restaurantName,
         image: food.image,
+        rating:
+          food.restaurant.review.reduce(
+            (acc: number, item) => acc + item.rating,
+            0,
+          ) / food.restaurant.review.length,
         category: food.category.map((value) => value.category.name),
       };
     });
