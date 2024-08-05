@@ -90,4 +90,37 @@ describe('RestaurantController Test', () => {
       expect(response.body.errors[1].path[0]).toBe('city');
     });
   });
+
+  describe('POST recommendation food restaurant : /api/add-recommendation/:foodId', () => {
+    it('Should be success test when add recommendation foods restaurant', async () => {
+      const response = await request(app.getHttpServer())
+        .patch('/api/add-recommendation/149')
+        .set('Authorization', `${process.env.JWT_TOKEN_RESTAURANT_TESTING}`);
+
+      logger.info(response.body);
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe(
+        'Successfully added food as a Recommendation',
+      );
+    });
+
+    it('Should be invalid test when add recommendation foods restauran (Not Auth)', async () => {
+      const response = await request(app.getHttpServer()).patch(
+        '/api/add-recommendation/149',
+      );
+
+      logger.info(response.body);
+      expect(response.status).toBe(401);
+    });
+
+    it('Should be invalid test when add recommendation foods restaurant (foodId not found)', async () => {
+      const response = await request(app.getHttpServer())
+        .patch('/api/add-recommendation/149414141')
+        .set('Authorization', `${process.env.JWT_TOKEN_RESTAURANT_TESTING}`);
+
+      logger.info(response.body);
+      expect(response.status).toBe(404);
+      expect(response.body.errors).toBe('Food not found');
+    });
+  });
 });
