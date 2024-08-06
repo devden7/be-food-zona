@@ -214,6 +214,7 @@ export class FoodsService {
     const limitFoods = request.limit ? request.limit : undefined;
     const query = await this.prismaService.food.findMany({
       where: {
+        isRecommendation: true,
         restaurant: {
           city_name: {
             contains: request.city,
@@ -228,6 +229,7 @@ export class FoodsService {
         price: true,
         restaurantName: true,
         image: true,
+        isRecommendation: true,
         restaurant: {
           select: {
             review: {
@@ -255,6 +257,7 @@ export class FoodsService {
         price: food.price,
         restaurantName: food.restaurantName,
         image: food.image,
+        isRecommendation: food.isRecommendation,
         rating:
           food.restaurant.review.reduce(
             (acc: number, item) => acc + item.rating,
@@ -268,11 +271,10 @@ export class FoodsService {
 
   async getFoodListDetail(restaurantName: string): Promise<IResponseGetFoods> {
     this.logger.info('Restaurant name : ' + JSON.stringify(restaurantName));
-
     const findRestaurantQuery = await this.prismaService.restaurant.findFirst({
       where: {
         restaurantName: {
-          contains: restaurantName,
+          equals: restaurantName,
           mode: 'insensitive',
         },
       },
@@ -285,7 +287,7 @@ export class FoodsService {
     const getFoodQuery = await this.prismaService.food.findMany({
       where: {
         restaurantName: {
-          contains: restaurantName,
+          equals: restaurantName,
           mode: 'insensitive',
         },
       },
@@ -296,6 +298,7 @@ export class FoodsService {
         price: true,
         restaurantName: true,
         image: true,
+        isRecommendation: true,
         category: {
           select: {
             category: {
@@ -342,6 +345,7 @@ export class FoodsService {
         restaurantName: food.restaurantName,
         image: food.image,
         category: food.category.map((value) => value.category.name),
+        isRecommendation: food.isRecommendation,
       };
     });
     return {
@@ -367,6 +371,7 @@ export class FoodsService {
 
     const findFoodRecommendation = await this.prismaService.food.findFirst({
       where: {
+        restaurantName: restaurantName,
         isRecommendation: true,
       },
     });
