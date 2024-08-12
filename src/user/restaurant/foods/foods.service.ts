@@ -11,6 +11,7 @@ import {
   IResponseGetFoods,
 } from 'src/model/foods.model';
 import { FoodValidaton } from './foods.validation';
+import { calcRating } from 'src/helper/util';
 
 @Injectable()
 export class FoodsService {
@@ -210,7 +211,7 @@ export class FoodsService {
   }
 
   async getFoodlists(request: IReqFoodsLists): Promise<IResponseGetFoods> {
-    this.logger.info('Foods Lists : ' + request);
+    this.logger.info('Foods Lists : ' + JSON.stringify(request));
     const limitFoods = request.limit ? request.limit : undefined;
     const query = await this.prismaService.food.findMany({
       where: {
@@ -258,11 +259,7 @@ export class FoodsService {
         restaurantName: food.restaurantName,
         image: food.image,
         isRecommendation: food.isRecommendation,
-        rating:
-          food.restaurant.review.reduce(
-            (acc: number, item) => acc + item.rating,
-            0,
-          ) / food.restaurant.review.length,
+        rating: calcRating(food.restaurant.review),
         category: food.category.map((value) => value.category.name),
       };
     });
