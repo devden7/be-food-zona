@@ -12,5 +12,7 @@ export interface IAuthReq {
 
 export interface IResponseRestaurant {
   username: string;
+  name: string;
   restaurantName: string;
+  token: string;
 }

@@ -8,12 +8,14 @@ import {
   IResponseRestaurant,
 } from 'src/model/restaurant.model';
 import { RestaurantValidation } from './restaurant.validation';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class RestaurantService {
   constructor(
     private prismaService: PrismaServices,
     private validationService: ValidationService,
+    private jwtService: JwtService,
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
   ) {}
 
@@ -63,9 +65,17 @@ export class RestaurantService {
       },
     });
 
+    request.user.restaurant = insertDataRestaurant.restaurantName;
+
     return {
-      restaurantName: insertDataRestaurant.restaurantName,
       username: insertDataRestaurant.username,
+      name: insertDataRestaurant.user.name,
+      restaurantName: insertDataRestaurant.restaurantName,
+      token: await this.jwtService.signAsync({
+        name: insertDataRestaurant.user.name,
+        username: insertDataRestaurant.username,
+        restaurant: insertDataRestaurant.restaurantName,
+      }),
     };
   }
 }
