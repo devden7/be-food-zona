@@ -69,7 +69,6 @@ model OrderItem {
   foodNameOrder String
   foodId Int
   orderId Int
-  food Food @relation(fields: [foodId],references: [foodId])
   Order Order @relation(fields: [orderId], references: [orderId])
   @@map("order_item")
 }
@@ -96,7 +95,6 @@ model Food {
   price Int 
   restaurantName String @db.VarChar(50)
   image String? @db.VarChar(250)
-  orderItem OrderItem[]
   isRecommendation Boolean?
   category FoodCategory[]
   restaurant Restaurant @relation(fields: [restaurantName], references: [restaurantName])
