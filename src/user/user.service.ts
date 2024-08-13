@@ -81,7 +81,7 @@ export class UserService {
 
     return {
       name: user.name,
-      username: user.name,
+      username: user.username,
       restaurant:
         findRestaurant !== null ? findRestaurant.restaurantName : null,
       token: await this.jwtService.signAsync({

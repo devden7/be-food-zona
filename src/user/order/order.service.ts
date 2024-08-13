@@ -20,6 +20,7 @@ export class OrderService {
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
   ) {}
   async createOrder(request: IReqOrder): Promise<IResOrder> {
+    console.log(request, 'ORDERR');
     this.logger.info('Order : ', JSON.stringify(request));
     const { items } = request;
     const idItems = [];
@@ -27,9 +28,14 @@ export class OrderService {
     for (let i = 0; i < items.length; i++) {
       idItems.push(items[i].foodId);
     }
+    console.log(idItems);
 
+    const findObj =
+      idItems.length > 1 ? { foodId: { in: idItems } } : { foodId: idItems[0] };
+
+    console.log(findObj);
     const findProductQuery = await this.prismaService.food.findMany({
-      where: { foodId: { in: idItems } },
+      where: findObj,
       include: {
         restaurant: {
           select: { username: true },
@@ -73,7 +79,6 @@ export class OrderService {
     const orderItemList = [];
     for (let l = 0; l < validationRequest.items.length; l++) {
       orderItemList.push({
-        foodId: validationRequest.items[l].foodId,
         orderId: insertOrderQuery.orderId,
         foodNameOrder: validationRequest.items[l].name,
       });
@@ -204,6 +209,11 @@ export class OrderService {
         restaurant: {
           select: {
             city_name: true,
+          },
+        },
+        review: {
+          select: {
+            orderId: true,
           },
         },
       },

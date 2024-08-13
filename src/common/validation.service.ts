@@ -51,6 +51,7 @@ export class ValidationService {
         items[j].restaurantName !== itemsBody[j].restaurantName ||
         items[j].image !== itemsBody[j].image
       ) {
+        console.log('LOOPING');
         throw new HttpException('Order not valid!', 400);
       } else {
         totalQuantity = totalQuantity + itemsBody[j].quantity;
@@ -63,6 +64,7 @@ export class ValidationService {
       totalQuantity !== request.totalQuantityBody ||
       calcPriceItem + PAJAK !== request.calcPriceItemBody + PAJAK
     ) {
+      console.log('PRICEE');
       throw new HttpException('Order not valid!', 400);
     }
 

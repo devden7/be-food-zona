@@ -84,11 +84,11 @@ export class FoodsController {
     @Body() request: IReqFoodsLists,
   ): Promise<IResponseFE<IResponseGetFoods>> {
     const results = await this.foodService.getFoodlists(request);
-
+    console.log(results);
     return { data: results };
   }
 
-  @Get('foods/:restaurantName')
+  @Get('/foods/:restaurantName')
   async getFoodDetail(
     @Param('restaurantName') restaurantName: string,
   ): Promise<IResponseFE<IResponseGetFoods>> {

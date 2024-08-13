@@ -263,6 +263,7 @@ export class FoodsService {
         category: food.category.map((value) => value.category.name),
       };
     });
+
     return { foods: finalResultQuery };
   }
 
@@ -345,6 +346,8 @@ export class FoodsService {
         isRecommendation: food.isRecommendation,
       };
     });
+
+    console.log(getFoodQuery[0].restaurant.review);
     return {
       foods: finalResultQuery,
       restaurantName: restaurantName,
