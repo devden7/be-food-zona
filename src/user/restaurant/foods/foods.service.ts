@@ -12,6 +12,7 @@ import {
 } from 'src/model/foods.model';
 import { FoodValidaton } from './foods.validation';
 import { calcRating } from 'src/helper/util';
+import { query, request } from 'express';
 
 @Injectable()
 export class FoodsService {
@@ -213,8 +214,34 @@ export class FoodsService {
   async getFoodlists(request: IReqFoodsLists): Promise<IResponseGetFoods> {
     this.logger.info('Foods Lists : ' + JSON.stringify(request));
     const limitFoods = request.limit ? request.limit : undefined;
-    const query = await this.prismaService.food.findMany({
-      where: {
+    const listsParamsValid = [
+      'near_me',
+      'best_seller',
+      'most_loved',
+      'martabak',
+      'bakso',
+      'roti',
+      'chinese',
+      'burger',
+      'fastfood',
+      'japanese',
+      'snacks',
+      'sate',
+      'pizza',
+      'bakmie',
+      'minuman',
+      'korean',
+      'seafood',
+      'coffee',
+      'indian_food',
+      'middle_eastern',
+    ];
+    let filter;
+    let takeRestaurantName;
+    let aggregationsData;
+    let findCategoryQuery;
+    if (request.category === 'near_me') {
+      filter = {
         isRecommendation: true,
         restaurant: {
           city_name: {
@@ -222,7 +249,67 @@ export class FoodsService {
             mode: 'insensitive',
           },
         },
-      },
+      };
+    } else if (request.category === 'best_seller') {
+      aggregationsData = await this.prismaService.order.groupBy({
+        by: ['restaurantName'],
+        where: { status: 'Berhasil' },
+        _count: { orderId: true },
+        orderBy: { _count: { orderId: 'desc' } },
+      });
+      takeRestaurantName = aggregationsData.map((item) => item.restaurantName);
+      filter = {
+        isRecommendation: true,
+        restaurant: {
+          city_name: {
+            contains: request.city,
+            mode: 'insensitive',
+          },
+          restaurantName: { in: takeRestaurantName },
+        },
+      };
+    } else if (request.category === 'most_loved') {
+      aggregationsData = await this.prismaService.foodReview.groupBy({
+        by: ['restaurantName'],
+        _avg: { rating: true },
+      });
+
+      filter = {
+        isRecommendation: true,
+        restaurant: {
+          city_name: {
+            contains: request.city,
+            mode: 'insensitive',
+          },
+        },
+      };
+    } else {
+      if (listsParamsValid.includes(request.category)) {
+        findCategoryQuery = await this.prismaService.category.findMany({
+          where: {
+            name: {
+              contains: request.category,
+              mode: 'insensitive',
+            },
+          },
+        });
+
+        filter = {
+          restaurant: {
+            city_name: {
+              contains: request.city,
+              mode: 'insensitive',
+            },
+          },
+          category: {
+            some: { category: { name: findCategoryQuery[0].name } },
+          },
+        };
+      }
+    }
+
+    const query = await this.prismaService.food.findMany({
+      where: filter,
       select: {
         foodId: true,
         name: true,
@@ -250,6 +337,29 @@ export class FoodsService {
       },
       take: limitFoods,
     });
+
+    if (request.category === 'best_seller') {
+      query.sort((a, b) => {
+        const indexA = takeRestaurantName.indexOf(a.restaurantName);
+        const indexB = takeRestaurantName.indexOf(b.restaurantName);
+        return indexA - indexB;
+      });
+    } else if (request.category === 'most_loved') {
+      query
+        .map((food) => {
+          const ratingData = aggregationsData.find(
+            (rating) => rating.restaurantName === food.restaurantName,
+          );
+          const averageRating = ratingData ? ratingData._avg.rating : 0;
+
+          return {
+            ...food,
+            averageRating,
+          };
+        })
+        .sort((a, b) => b.averageRating - a.averageRating);
+    }
+
     const finalResultQuery = query.map((food) => {
       return {
         foodId: food.foodId,
