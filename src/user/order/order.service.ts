@@ -20,7 +20,6 @@ export class OrderService {
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
   ) {}
   async createOrder(request: IReqOrder): Promise<IResOrder> {
-    console.log(request, 'ORDERR');
     this.logger.info('Order : ', JSON.stringify(request));
     const { items } = request;
     const idItems = [];
@@ -28,12 +27,10 @@ export class OrderService {
     for (let i = 0; i < items.length; i++) {
       idItems.push(items[i].foodId);
     }
-    console.log(idItems);
 
     const findObj =
       idItems.length > 1 ? { foodId: { in: idItems } } : { foodId: idItems[0] };
 
-    console.log(findObj);
     const findProductQuery = await this.prismaService.food.findMany({
       where: findObj,
       include: {

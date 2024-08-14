@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import {
   IRegisterRestaurant,
+  IResCityList,
   IResponseRestaurant,
 } from 'src/model/restaurant.model';
 import { IResponseFE } from 'src/model/web.model';
@@ -20,6 +21,12 @@ export class RestaurantController {
       user,
       ...request,
     });
+    return { data: response };
+  }
+
+  @Get('/city')
+  async getCityList(): Promise<IResponseFE<IResCityList[]>> {
+    const response = await this.restaurantService.getAllCity();
     return { data: response };
   }
 }

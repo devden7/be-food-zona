@@ -4,6 +4,7 @@ import { ValidationService } from '../../common/validation.service';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import {
+  IResCityList,
   IRegisterRestaurant,
   IResponseRestaurant,
 } from 'src/model/restaurant.model';
@@ -77,5 +78,10 @@ export class RestaurantService {
         restaurant: insertDataRestaurant.restaurantName,
       }),
     };
+  }
+
+  async getAllCity(): Promise<IResCityList[]> {
+    const findCityQuery = await this.prismaService.city.findMany();
+    return findCityQuery;
   }
 }

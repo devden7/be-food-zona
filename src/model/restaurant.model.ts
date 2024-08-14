@@ -10,6 +10,9 @@ export interface IAuthReq {
   restaurant: string;
 }
 
+export interface IResCityList {
+  city_name: string;
+}
 export interface IResponseRestaurant {
   username: string;
   name: string;

@@ -84,7 +84,6 @@ export class FoodsController {
     @Body() request: IReqFoodsLists,
   ): Promise<IResponseFE<IResponseGetFoods>> {
     const results = await this.foodService.getFoodlists(request);
-    console.log(results);
     return { data: results };
   }
 

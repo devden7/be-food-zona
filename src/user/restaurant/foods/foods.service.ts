@@ -347,7 +347,6 @@ export class FoodsService {
       };
     });
 
-    console.log(getFoodQuery[0].restaurant.review);
     return {
       foods: finalResultQuery,
       restaurantName: restaurantName,
