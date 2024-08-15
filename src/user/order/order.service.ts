@@ -108,6 +108,7 @@ export class OrderService {
         status: true,
         username: true,
         totalQuantity: true,
+        createAt: true,
         restaurant: {
           select: {
             city_name: true,
@@ -203,6 +204,7 @@ export class OrderService {
         status: true,
         username: true,
         totalQuantity: true,
+        createAt: true,
         restaurant: {
           select: {
             city_name: true,
