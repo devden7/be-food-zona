@@ -5,10 +5,12 @@ import { AppModule } from '../src/app.module';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { TestModule } from './test.module';
+import { TestService } from './test.service';
 
 describe('RestaurantController Test', () => {
   let app: INestApplication;
   let logger: Logger;
+  let testService: TestService;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -18,30 +20,39 @@ describe('RestaurantController Test', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
     logger = app.get(WINSTON_MODULE_PROVIDER);
+    testService = app.get(TestService);
   });
 
   describe('POST Create Restaurant : /api/create-restaurant', () => {
+    beforeEach(async () => {
+      await testService.deleteAll();
+
+      await testService.createDummyUser();
+    });
     it('Should be success test when creating a restaurant', async () => {
       const response = await request(app.getHttpServer())
         .post('/api/register-restaurant')
         .send({
-          restaurantName: 'Restaurant ayam geprek',
-          city: 'Jakarta',
-        });
+          restaurantName: 'restaurant1',
+          city: 'jakarta',
+        })
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(201);
       expect(response.body.data.username).toBe('test1');
-      expect(response.body.data.restaurantName).toBe('Restaurant ayam geprek');
+      expect(response.body.data.restaurantName).toBe('restaurant1');
     });
 
     it('Should be an invalid test when creating a restaurant (User have a restaurant)', async () => {
+      await testService.createDummyRestaurant();
       const response = await request(app.getHttpServer())
         .post('/api/register-restaurant')
         .send({
-          restaurantName: 'Restaurant ayam geprekk',
-          city: 'Jakarta',
-        });
+          restaurantName: 'restaurant1',
+          city: 'jakarta',
+        })
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(400);
@@ -52,9 +63,10 @@ describe('RestaurantController Test', () => {
       const response = await request(app.getHttpServer())
         .post('/api/register-restaurant')
         .send({
-          restaurantName: 'Restaurant ayam geprek',
-          city: 'Jakarta',
-        });
+          restaurantName: 'restaurant2',
+          city: 'jakarta',
+        })
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(400);
@@ -67,7 +79,8 @@ describe('RestaurantController Test', () => {
         .send({
           restaurantName: 'Re',
           city: 'Ja',
-        });
+        })
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(400);
@@ -82,7 +95,8 @@ describe('RestaurantController Test', () => {
           restaurantName:
             'Restaurant ayam geprekRestaurant ayam geprekRestaurant ayam geprekRestaurant ayam geprekRestaurant ayam geprekRestaurant ayam geprekRestaurant ayam geprekRestaurant ayam geprekRestaurant ayam geprekRestaurant ayam geprekRestaurant ayam geprekRestaurant ayam geprekRestaurant ayam geprekRestaurant ayam geprekRestaurant ayam geprekRestaurant ayam geprekRestaurant ayam geprek',
           city: 'JakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakartaJakarta',
-        });
+        })
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(400);
@@ -91,11 +105,18 @@ describe('RestaurantController Test', () => {
     });
   });
 
-  describe('POST recommendation food restaurant : /api/add-recommendation/:foodId', () => {
+  describe('PATCH recommendation food restaurant : /api/add-recommendation/:foodId', () => {
+    beforeEach(async () => {
+      await testService.deleteAll();
+
+      await testService.createDummyUser();
+      await testService.createDummyRestaurant();
+      await testService.createDummyFood();
+    });
     it('Should be success test when add recommendation foods restaurant', async () => {
       const response = await request(app.getHttpServer())
-        .patch('/api/add-recommendation/149')
-        .set('Authorization', `${process.env.JWT_TOKEN_RESTAURANT_TESTING}`);
+        .patch('/api/add-recommendation/15')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(200);
@@ -116,7 +137,7 @@ describe('RestaurantController Test', () => {
     it('Should be invalid test when add recommendation foods restaurant (foodId not found)', async () => {
       const response = await request(app.getHttpServer())
         .patch('/api/add-recommendation/149414141')
-        .set('Authorization', `${process.env.JWT_TOKEN_RESTAURANT_TESTING}`);
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(404);

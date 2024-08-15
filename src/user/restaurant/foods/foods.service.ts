@@ -11,8 +11,7 @@ import {
   IResponseGetFoods,
 } from 'src/model/foods.model';
 import { FoodValidaton } from './foods.validation';
-import { calcRating } from 'src/helper/util';
-import { query, request } from 'express';
+import { calcRating } from '../../../helper/util';
 
 @Injectable()
 export class FoodsService {

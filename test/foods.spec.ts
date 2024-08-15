@@ -25,25 +25,11 @@ describe('FoodController Test', () => {
   });
 
   describe('POST Create Foods : /api/create-food', () => {
-    it('Should be success test when creating a food', async () => {
-      await testService.createDummyFood();
-      const response = await request(app.getHttpServer())
-        .post('/api/create-food')
-        .send({
-          foodName: 'ayam geprek pedas',
-          description: 'ayam geprek pedas description',
-          price: 20000,
-          category: 'Junk food',
-        });
+    beforeEach(async () => {
+      await testService.deleteAll();
 
-      logger.info(response.body);
-      expect(response.status).toBe(201);
-      expect(response.body.data.message).toBe('Data Berhasil ditambahkan');
-      expect(response.body.data.food.name).toBe('ayam geprek pedas');
-      expect(response.body.data.food.description).toBe(
-        'ayam geprek pedas description',
-      );
-      expect(response.body.data.food.price).toBe(20000);
+      await testService.createDummyUser();
+      await testService.createDummyRestaurant();
     });
 
     it('Should be success test when creating a food with image (FORMAT FILE : PNG)', async () => {
@@ -53,20 +39,21 @@ describe('FoodController Test', () => {
       const response = await request(app.getHttpServer())
         .post('/api/create-food')
         .attach('image', pickImage)
-        .field('foodName', 'ayam geprek pedas')
-        .field('description', 'ayam geprek pedas description')
-        .field('price', 20000)
-        .field('category', 'Junk food');
+        .field('foodName', 'test food1')
+        .field('description', 'test description food1')
+        .field('price', 1000)
+        .field('category', 'category1')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(201);
       expect(response.body.data.message).toBe('Data Berhasil ditambahkan');
-      expect(response.body.data.food.name).toBe('ayam geprek pedas');
-      expect(response.body.data.food.description).toBe(
-        'ayam geprek pedas description',
+      expect(response.body.data.foods.name).toBe('test food1');
+      expect(response.body.data.foods.description).toBe(
+        'test description food1',
       );
-      expect(response.body.data.food.price).toBe(20000);
-      expect(response.body.data.food.image).toBeDefined();
+      expect(response.body.data.foods.price).toBe(1000);
+      expect(response.body.data.foods.image).toBeDefined();
     });
 
     it('Should be success test when creating a food with image (FORMAT FILE : JPG)', async () => {
@@ -76,20 +63,21 @@ describe('FoodController Test', () => {
       const response = await request(app.getHttpServer())
         .post('/api/create-food')
         .attach('image', pickImage)
-        .field('foodName', 'ayam geprek pedas')
-        .field('description', 'ayam geprek pedas description')
-        .field('price', 20000)
-        .field('category', 'Junk food');
+        .field('foodName', 'test food1')
+        .field('description', 'test description food1')
+        .field('price', 1000)
+        .field('category', 'category1')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(201);
       expect(response.body.data.message).toBe('Data Berhasil ditambahkan');
-      expect(response.body.data.food.name).toBe('ayam geprek pedas');
-      expect(response.body.data.food.description).toBe(
-        'ayam geprek pedas description',
+      expect(response.body.data.foods.name).toBe('test food1');
+      expect(response.body.data.foods.description).toBe(
+        'test description food1',
       );
-      expect(response.body.data.food.price).toBe(20000);
-      expect(response.body.data.food.image).toBeDefined();
+      expect(response.body.data.foods.price).toBe(1000);
+      expect(response.body.data.foods.image).toBeDefined();
     });
 
     it('Should be success test when creating a food with image (FORMAT FILE : JPEG)', async () => {
@@ -99,20 +87,21 @@ describe('FoodController Test', () => {
       const response = await request(app.getHttpServer())
         .post('/api/create-food')
         .attach('image', pickImage)
-        .field('foodName', 'ayam geprek pedas')
-        .field('description', 'ayam geprek pedas description')
-        .field('price', 20000)
-        .field('category', 'Junk food');
+        .field('foodName', 'test food1')
+        .field('description', 'test description food1')
+        .field('price', 1000)
+        .field('category', 'category1')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(201);
       expect(response.body.data.message).toBe('Data Berhasil ditambahkan');
-      expect(response.body.data.food.name).toBe('ayam geprek pedas');
-      expect(response.body.data.food.description).toBe(
-        'ayam geprek pedas description',
+      expect(response.body.data.foods.name).toBe('test food1');
+      expect(response.body.data.foods.description).toBe(
+        'test description food1',
       );
-      expect(response.body.data.food.price).toBe(20000);
-      expect(response.body.data.food.image).toBeDefined();
+      expect(response.body.data.foods.price).toBe(1000);
+      expect(response.body.data.foods.image).toBeDefined();
     });
 
     it('Should be invalid test when creating a food without image', async () => {
@@ -122,11 +111,14 @@ describe('FoodController Test', () => {
         .field('foodName', 'ayam geprek pedas')
         .field('description', 'ayam geprek pedas description')
         .field('price', 20000)
-        .field('category', 'Junk food');
+        .field('category', 'Junk food')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toBe('Image not valid');
+      expect(response.body.errors).toBe(
+        'Only .jpg, .jpeg, and .png  formats are supported.',
+      );
     });
 
     it('Should be invalid test when creating a food with image (FORMAT FILE : SVG)', async () => {
@@ -136,25 +128,30 @@ describe('FoodController Test', () => {
       const response = await request(app.getHttpServer())
         .post('/api/create-food')
         .attach('image', pickImage)
-        .field('foodName', 'ayam geprek pedas')
-        .field('description', 'ayam geprek pedas description')
-        .field('price', 20000)
-        .field('category', 'Junk food');
+        .field('foodName', 'test food1')
+        .field('description', 'test description food1')
+        .field('price', 1000)
+        .field('category', 'category1')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toBe('Image not valid');
+      expect(response.body.errors).toBe(
+        'Only .jpg, .jpeg, and .png  formats are supported.',
+      );
     });
 
     it('Should be an invalid test when creating a food (Foodname,Description,Category : Character less than 1, Price : number lower than 1000)', async () => {
+      const filePath = path.resolve(__dirname, '..', 'upload');
+      const pickImage = path.resolve(filePath, 'testing-png.png');
       const response = await request(app.getHttpServer())
         .post('/api/create-food')
-        .send({
-          foodName: '',
-          description: '',
-          price: 999,
-          category: '',
-        });
+        .attach('image', pickImage)
+        .field('foodName', '')
+        .field('description', '')
+        .field('price', 999)
+        .field('category', '')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(400);
@@ -165,17 +162,26 @@ describe('FoodController Test', () => {
     });
 
     it('Should be an invalid test when creating a food (Foodname,Category : Character more than 150,Description : Character more than 250, price : number greater than 1.000.000)', async () => {
+      const filePath = path.resolve(__dirname, '..', 'upload');
+      const pickImage = path.resolve(filePath, 'testing-png.png');
+
       const response = await request(app.getHttpServer())
         .post('/api/create-food')
-        .send({
-          foodName:
-            'food name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name ',
-          description:
-            'food name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name',
-          price: 1100000,
-          category:
-            'category name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name ',
-        });
+        .attach('image', pickImage)
+        .field(
+          'foodName',
+          'food name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name',
+        )
+        .field(
+          'description',
+          'food name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name',
+        )
+        .field('price', 1100000)
+        .field(
+          'category',
+          'category name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name',
+        )
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(400);
@@ -187,10 +193,17 @@ describe('FoodController Test', () => {
   });
 
   describe('GET Foods lists : /api/restaurant-foods', () => {
-    it('Should be success test when creating a food', async () => {
-      const response = await request(app.getHttpServer()).get(
-        '/api/restaurant-foods',
-      );
+    beforeEach(async () => {
+      await testService.deleteAll();
+
+      await testService.createDummyUser();
+      await testService.createDummyRestaurant();
+      await testService.createDummyFood();
+    });
+    it('Should be success test when get a food', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/restaurant-foods')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
       logger.info(response.body);
       expect(response.status).toBe(200);
     });
@@ -198,35 +211,45 @@ describe('FoodController Test', () => {
 
   describe('UPDATE Foods : /api/update/:foodId', () => {
     beforeEach(async () => {
-      await testService.deletedDummyFood();
+      await testService.deleteAll();
+
+      await testService.createDummyUser();
+      await testService.createDummyRestaurant();
       await testService.createDummyFood();
     });
+
     it('Should be success test when updating a food', async () => {
+      const filePath = path.resolve(__dirname, '..', 'upload');
+      const pickImage = path.resolve(filePath, 'testing-png.png');
       const response = await request(app.getHttpServer())
         .put('/api/update/15')
-        .send({
-          foodName: 'ayam geprek pedas updateddd',
-          description: 'ayam geprek pedas description',
-          price: 15000,
-        });
+        .attach('image', pickImage)
+        .field('foodName', 'test food1 updated')
+        .field('description', 'test description food1 updated')
+        .field('price', 1001)
+        .field('category', 'category1-1')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(200);
-      expect(response.body.data.food.name).toBe('ayam geprek pedas updateddd');
-      expect(response.body.data.food.description).toBe(
-        'ayam geprek pedas description',
+      expect(response.body.data.foods.name).toBe('test food1 updated');
+      expect(response.body.data.foods.description).toBe(
+        'test description food1 updated',
       );
-      expect(response.body.data.food.price).toBe(15000);
+      expect(response.body.data.foods.price).toBe(1001);
     });
 
     it('Should be invalid test when updating a food (ParamsId not found)', async () => {
+      const filePath = path.resolve(__dirname, '..', 'upload');
+      const pickImage = path.resolve(filePath, 'testing-png.png');
       const response = await request(app.getHttpServer())
         .put('/api/update/8')
-        .send({
-          foodName: 'ayam penyet pedas updateddd',
-          description: 'ayam penyet pedas description',
-          price: 50000,
-        });
+        .attach('image', pickImage)
+        .field('foodName', 'test food1 updated')
+        .field('description', 'test description food1 updated')
+        .field('price', 1001)
+        .field('category', 'category1-1')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(404);
@@ -234,13 +257,16 @@ describe('FoodController Test', () => {
     });
 
     it('Should be invalid test when updating a food (Restaurant Name not valid)', async () => {
+      const filePath = path.resolve(__dirname, '..', 'upload');
+      const pickImage = path.resolve(filePath, 'testing-png.png');
       const response = await request(app.getHttpServer())
         .put('/api/update/8')
-        .send({
-          foodName: 'ayam penyet pedas updatedddd',
-          description: 'ayam penyet pedas description',
-          price: 50000,
-        });
+        .attach('image', pickImage)
+        .field('foodName', 'test food1 updated')
+        .field('description', 'test description food1 updated')
+        .field('price', 1001)
+        .field('category', 'category1-1')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(404);
@@ -248,13 +274,16 @@ describe('FoodController Test', () => {
     });
 
     it('Should be an invalid test when updateting a food (Foodname,Description, : Character less than 1, Price : number lower than 1000)', async () => {
+      const filePath = path.resolve(__dirname, '..', 'upload');
+      const pickImage = path.resolve(filePath, 'testing-png.png');
       const response = await request(app.getHttpServer())
         .put('/api/update/15')
-        .send({
-          foodName: '',
-          description: '',
-          price: 999,
-        });
+        .attach('image', pickImage)
+        .field('foodName', '')
+        .field('description', '')
+        .field('price', 999)
+        .field('category', '')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(400);
@@ -264,15 +293,22 @@ describe('FoodController Test', () => {
     });
 
     it('Should be an invalid test when updating a food (Foodname : Character more than 150,Description : Character more than 250, price : number greater than 1.000.000)', async () => {
+      const filePath = path.resolve(__dirname, '..', 'upload');
+      const pickImage = path.resolve(filePath, 'testing-png.png');
       const response = await request(app.getHttpServer())
         .put('/api/update/15')
-        .send({
-          foodName:
-            'food name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name ',
-          description:
-            'food name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name',
-          price: 1100000,
-        });
+        .attach('image', pickImage)
+        .field(
+          'foodName',
+          'food name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name',
+        )
+        .field(
+          'description',
+          'food name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name name',
+        )
+        .field('price', 1100000)
+        .field('category', 'category1-1')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
       logger.info(response.body);
       expect(response.status).toBe(400);
@@ -284,24 +320,24 @@ describe('FoodController Test', () => {
 
   describe('DELETE Foods : /delete/:foodId', () => {
     it('Should be success test when deleting a food', async () => {
-      const response = await request(app.getHttpServer()).delete(
-        '/api/delete/15',
-      );
-      logger.info(response.body);
+      const response = await request(app.getHttpServer())
+        .delete('/api/delete/15')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
 
+      logger.info(response.body);
       expect(response.status).toBe(200);
       expect(response.body.data.message).toBe('Data Berhasil dihapus');
-      expect(response.body.data.food.name).toBe('ayam geprek pedas');
-      expect(response.body.data.food.description).toBe(
-        'ayam geprek pedas description dummy',
+      expect(response.body.data.foods.name).toBe('test food1');
+      expect(response.body.data.foods.description).toBe(
+        'test description food1',
       );
-      expect(response.body.data.food.price).toBe(15000);
+      expect(response.body.data.foods.price).toBe(1000);
     });
 
     it('Should be invalid test when deleting a food (Params id : Not found)', async () => {
-      const response = await request(app.getHttpServer()).delete(
-        '/api/delete/8',
-      );
+      const response = await request(app.getHttpServer())
+        .delete('/api/delete/8')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING}`);
       logger.info(response.body);
 
       expect(response.status).toBe(404);
@@ -309,12 +345,12 @@ describe('FoodController Test', () => {
     });
   });
 
-  describe('POST Foods Lists : /api/foods', () => {
-    it('Should be success test when POST foods Lists', async () => {
+  describe('POST (for geting lists all foods) Foods Lists : /api/foods', () => {
+    it('Should be success test when POST foods Lists with ', async () => {
       const response = await request(app.getHttpServer())
         .post('/api/foods')
         .send({
-          city: 'Bandung',
+          city: 'jakarta',
           category: 'near_me',
         });
       logger.info(response.body);

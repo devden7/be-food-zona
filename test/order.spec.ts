@@ -5,10 +5,12 @@ import { AppModule } from '../src/app.module';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { TestModule } from './test.module';
+import { TestService } from './test.service';
 
 describe('OrderController Test', () => {
   let app: INestApplication;
   let logger: Logger;
+  let testService: TestService;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -18,9 +20,18 @@ describe('OrderController Test', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
     logger = app.get(WINSTON_MODULE_PROVIDER);
+    testService = app.get(TestService);
   });
 
   describe('POST Doing Order : /api/order', () => {
+    beforeEach(async () => {
+      await testService.deleteAll();
+
+      await testService.createDummyUser();
+      await testService.createDummyRestaurant();
+      await testService.createDummyFood();
+    });
+
     it('Should be a success test when Doing an order', async () => {
       const response = await request(app.getHttpServer())
         .post('/api/order')
@@ -28,27 +39,18 @@ describe('OrderController Test', () => {
         .send({
           items: [
             {
-              foodId: 148,
-              name: 'food jakarta',
-              description: 'food jakarta',
-              price: 1000,
-              restaurantName: 'Restaurant tahu',
-              image: '2024-07-29T01-17-15.866Z-testing-jpeg.jpeg',
-              quantity: 1,
-              totalPrice: 1000,
-            },
-            {
-              foodId: 156,
-              name: 'food jakarta 9',
-              description: 'food jakarta 9',
-              price: 9000,
-              restaurantName: 'Restaurant tahu',
+              foodId: 16,
+              name: 'test food2',
+              description: 'test description food2',
+              price: 2000,
+              restaurantName: 'restaurant2',
               image: null,
               quantity: 1,
+              totalPrice: 2000,
             },
           ],
-          totalQuantity: 2,
-          calcPriceItem: 10000,
+          totalQuantity: 1,
+          calcPriceItem: 2000,
         });
 
       logger.info(response.body);
@@ -63,27 +65,18 @@ describe('OrderController Test', () => {
         .send({
           items: [
             {
-              foodId: 149,
-              name: 'food jakarta',
-              description: 'food jakarta',
-              price: 1000,
-              restaurantName: 'Restaurant tahu',
-              image: '2024-07-29T01-17-15.866Z-testing-jpeg.jpeg',
-              quantity: 1,
-              totalPrice: 1000,
-            },
-            {
-              foodId: 156,
-              name: 'food jakarta 9',
-              description: 'food jakarta 9',
-              price: 9000,
-              restaurantName: 'Restaurant tahu',
+              foodId: 20,
+              name: 'test food2',
+              description: 'test description food2',
+              price: 2000,
+              restaurantName: 'restaurant2',
               image: null,
               quantity: 1,
+              totalPrice: 2000,
             },
           ],
-          totalQuantity: 2,
-          calcPriceItem: 10000,
+          totalQuantity: 1,
+          calcPriceItem: 2000,
         });
 
       logger.info(response.body);
@@ -98,27 +91,18 @@ describe('OrderController Test', () => {
         .send({
           items: [
             {
-              foodId: 148,
-              name: 'food jakartaa',
-              description: 'food jakarta',
-              price: 1000,
-              restaurantName: 'Restaurant tahu',
-              image: '2024-07-29T01-17-15.866Z-testing-jpeg.jpeg',
-              quantity: 1,
-              totalPrice: 1000,
-            },
-            {
-              foodId: 156,
-              name: 'food jakarta 9',
-              description: 'food jakarta 9',
-              price: 9000,
-              restaurantName: 'Restaurant tahu',
+              foodId: 16,
+              name: 'test food22',
+              description: 'test description food2',
+              price: 2000,
+              restaurantName: 'restaurant2',
               image: null,
               quantity: 1,
+              totalPrice: 2000,
             },
           ],
-          totalQuantity: 2,
-          calcPriceItem: 10000,
+          totalQuantity: 1,
+          calcPriceItem: 2000,
         });
 
       logger.info(response.body);
@@ -133,27 +117,18 @@ describe('OrderController Test', () => {
         .send({
           items: [
             {
-              foodId: 148,
-              name: 'food jakarta',
-              description: 'food jakartaa',
-              price: 1000,
-              restaurantName: 'Restaurant tahu',
-              image: '2024-07-29T01-17-15.866Z-testing-jpeg.jpeg',
-              quantity: 1,
-              totalPrice: 1000,
-            },
-            {
-              foodId: 156,
-              name: 'food jakarta 9',
-              description: 'food jakarta 9',
-              price: 9000,
-              restaurantName: 'Restaurant tahu',
+              foodId: 16,
+              name: 'test food2',
+              description: 'test description food22',
+              price: 2000,
+              restaurantName: 'restaurant2',
               image: null,
               quantity: 1,
+              totalPrice: 2000,
             },
           ],
-          totalQuantity: 2,
-          calcPriceItem: 10000,
+          totalQuantity: 1,
+          calcPriceItem: 2000,
         });
 
       logger.info(response.body);
@@ -168,27 +143,18 @@ describe('OrderController Test', () => {
         .send({
           items: [
             {
-              foodId: 148,
-              name: 'food jakarta',
-              description: 'food jakarta',
-              price: 10000,
-              restaurantName: 'Restaurant tahu',
-              image: '2024-07-29T01-17-15.866Z-testing-jpeg.jpeg',
-              quantity: 1,
-              totalPrice: 1000,
-            },
-            {
-              foodId: 156,
-              name: 'food jakarta 9',
-              description: 'food jakarta 9',
-              price: 9000,
-              restaurantName: 'Restaurant tahu',
+              foodId: 16,
+              name: 'test food2',
+              description: 'test description food2',
+              price: 22000,
+              restaurantName: 'restaurant2',
               image: null,
               quantity: 1,
+              totalPrice: 2000,
             },
           ],
-          totalQuantity: 2,
-          calcPriceItem: 10000,
+          totalQuantity: 1,
+          calcPriceItem: 2000,
         });
 
       logger.info(response.body);
@@ -203,27 +169,18 @@ describe('OrderController Test', () => {
         .send({
           items: [
             {
-              foodId: 148,
-              name: 'food jakarta',
-              description: 'food jakarta',
-              price: 1000,
-              restaurantName: 'Restaurant tahuu',
-              image: '2024-07-29T01-17-15.866Z-testing-jpeg.jpeg',
-              quantity: 1,
-              totalPrice: 1000,
-            },
-            {
-              foodId: 156,
-              name: 'food jakarta 9',
-              description: 'food jakarta 9',
-              price: 9000,
-              restaurantName: 'Restaurant tahu',
+              foodId: 16,
+              name: 'test food2',
+              description: 'test description food2',
+              price: 2000,
+              restaurantName: 'restaurant22',
               image: null,
               quantity: 1,
+              totalPrice: 2000,
             },
           ],
-          totalQuantity: 2,
-          calcPriceItem: 10000,
+          totalQuantity: 1,
+          calcPriceItem: 2000,
         });
 
       logger.info(response.body);
@@ -238,27 +195,18 @@ describe('OrderController Test', () => {
         .send({
           items: [
             {
-              foodId: 148,
-              name: 'food jakarta',
-              description: 'food jakarta',
-              price: 1000,
-              restaurantName: 'Restaurant tahu',
-              image: '2024-07-29T01-17-15.866Z-testing-jpeg.jpegg',
+              foodId: 16,
+              name: 'test food2',
+              description: 'test description food2',
+              price: 2000,
+              restaurantName: 'restaurant2',
+              image: '2',
               quantity: 1,
-              totalPrice: 1000,
-            },
-            {
-              foodId: 156,
-              name: 'food jakarta 9',
-              description: 'food jakarta 9',
-              price: 9000,
-              restaurantName: 'Restaurant tahu',
-              image: null,
-              quantity: 1,
+              totalPrice: 2000,
             },
           ],
-          totalQuantity: 2,
-          calcPriceItem: 10000,
+          totalQuantity: 1,
+          calcPriceItem: 2000,
         });
 
       logger.info(response.body);
@@ -273,27 +221,18 @@ describe('OrderController Test', () => {
         .send({
           items: [
             {
-              foodId: 148,
-              name: 'food jakarta',
-              description: 'food jakarta',
-              price: 1000,
-              restaurantName: 'Restaurant tahu',
-              image: '2024-07-29T01-17-15.866Z-testing-jpeg.jpeg',
-              quantity: 2,
-              totalPrice: 1000,
-            },
-            {
-              foodId: 156,
-              name: 'food jakarta 9',
-              description: 'food jakarta 9',
-              price: 9000,
-              restaurantName: 'Restaurant tahu',
+              foodId: 16,
+              name: 'test food2',
+              description: 'test description food2',
+              price: 2000,
+              restaurantName: 'restaurant2',
               image: null,
-              quantity: 1,
+              quantity: 12,
+              totalPrice: 2000,
             },
           ],
-          totalQuantity: 2,
-          calcPriceItem: 10000,
+          totalQuantity: 1,
+          calcPriceItem: 2000,
         });
 
       logger.info(response.body);
@@ -308,27 +247,18 @@ describe('OrderController Test', () => {
         .send({
           items: [
             {
-              foodId: 148,
-              name: 'food jakarta',
-              description: 'food jakarta',
-              price: 1000,
-              restaurantName: 'Restaurant tahu',
-              image: '2024-07-29T01-17-15.866Z-testing-jpeg.jpeg',
-              quantity: 1,
-              totalPrice: 1000, //ini
-            },
-            {
-              foodId: 156,
-              name: 'food jakarta 9',
-              description: 'food jakarta 9',
-              price: 9000,
-              restaurantName: 'Restaurant tahu',
+              foodId: 16,
+              name: 'test food2',
+              description: 'test description food2',
+              price: 2000,
+              restaurantName: 'restaurant2',
               image: null,
               quantity: 1,
+              totalPrice: 2000,
             },
           ],
-          totalQuantity: 1,
-          calcPriceItem: 10000,
+          totalQuantity: 10,
+          calcPriceItem: 2000,
         });
 
       logger.info(response.body);
@@ -343,26 +273,18 @@ describe('OrderController Test', () => {
         .send({
           items: [
             {
-              foodId: 148,
-              name: 'food jakarta',
-              description: 'food jakarta',
-              price: 1000,
-              restaurantName: 'Restaurant tahu',
-              image: '2024-07-29T01-17-15.866Z-testing-jpeg.jpeg',
-              quantity: 1,
-            },
-            {
-              foodId: 156,
-              name: 'food jakarta 9',
-              description: 'food jakarta 9',
-              price: 9000,
-              restaurantName: 'Restaurant tahu',
+              foodId: 16,
+              name: 'test food2',
+              description: 'test description food2',
+              price: 2000,
+              restaurantName: 'restaurant2',
               image: null,
               quantity: 1,
+              totalPrice: 2000,
             },
           ],
-          totalQuantity: 2,
-          calcPriceItem: 0,
+          totalQuantity: 1,
+          calcPriceItem: 22000,
         });
 
       logger.info(response.body);
@@ -392,10 +314,19 @@ describe('OrderController Test', () => {
   });
 
   describe('PATCH order delivery Food : /api/delivery-food/:orderId', () => {
+    beforeEach(async () => {
+      await testService.deleteAll();
+
+      await testService.createDummyUser();
+      await testService.createDummyRestaurant();
+      await testService.createDummyFood();
+      await testService.createDummyOrder();
+    });
+
     it('should be a success test when delivering the food to the restaurant', async () => {
       const response = await request(app.getHttpServer())
-        .patch('/api/delivery-food/2')
-        .set('Authorization', `${process.env.JWT_TOKEN_RESTAURANT_TESTING}`);
+        .patch('/api/delivery-food/1')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING_2}`);
 
       logger.info(response.body);
       expect(response.status).toBe(200);
@@ -414,7 +345,7 @@ describe('OrderController Test', () => {
     it('should be an invalid test when delivering the food to the restaurant (orderId Not found)', async () => {
       const response = await request(app.getHttpServer())
         .patch('/api/delivery-food/222')
-        .set('Authorization', `${process.env.JWT_TOKEN_RESTAURANT_TESTING}`);
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING_2}`);
       logger.info(response.body);
       expect(response.status).toBe(404);
       expect(response.body.errors).toBe('Order not found!');
@@ -422,10 +353,18 @@ describe('OrderController Test', () => {
   });
 
   describe('PATCH order delivery Food : /api/cancel-food/:orderId', () => {
+    beforeEach(async () => {
+      await testService.deleteAll();
+
+      await testService.createDummyUser();
+      await testService.createDummyRestaurant();
+      await testService.createDummyFood();
+      await testService.createDummyOrder();
+    });
     it('should be a success test when canceling the food to the restaurant', async () => {
       const response = await request(app.getHttpServer())
-        .patch('/api/cancel-food/2')
-        .set('Authorization', `${process.env.JWT_TOKEN_RESTAURANT_TESTING}`);
+        .patch('/api/cancel-food/1')
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING_2}`);
 
       logger.info(response.body);
       expect(response.status).toBe(200);
@@ -434,7 +373,7 @@ describe('OrderController Test', () => {
 
     it('should be an invalid test when canceling the food to the restaurant (Not auth)', async () => {
       const response = await request(app.getHttpServer()).patch(
-        '/api/cancel-food/2',
+        '/api/cancel-food/16',
       );
 
       logger.info(response.body);
@@ -444,7 +383,7 @@ describe('OrderController Test', () => {
     it('should be an invalid test when canceling the food to the restaurant (orderId Not found)', async () => {
       const response = await request(app.getHttpServer())
         .patch('/api/cancel-food/222')
-        .set('Authorization', `${process.env.JWT_TOKEN_RESTAURANT_TESTING}`);
+        .set('Authorization', `${process.env.JWT_TOKEN_TESTING_2}`);
       logger.info(response.body);
       expect(response.status).toBe(404);
       expect(response.body.errors).toBe('Order not found!');
@@ -452,6 +391,14 @@ describe('OrderController Test', () => {
   });
 
   describe('GET order lists user : /api/orders-user', () => {
+    beforeEach(async () => {
+      await testService.deleteAll();
+
+      await testService.createDummyUser();
+      await testService.createDummyRestaurant();
+      await testService.createDummyFood();
+      await testService.createDummyOrder();
+    });
     it('Should be a success test when get order lists user', async () => {
       const response = await request(app.getHttpServer())
         .get('/api/orders-user')
@@ -472,9 +419,17 @@ describe('OrderController Test', () => {
   });
 
   describe('POST review food : /api/review/:orderId', () => {
+    beforeEach(async () => {
+      await testService.deleteAll();
+
+      await testService.createDummyUser();
+      await testService.createDummyRestaurant();
+      await testService.createDummyFood();
+      await testService.createDummyOrder();
+    });
     it('Should be a success test when the user gives a reviews', async () => {
       const response = await request(app.getHttpServer())
-        .post('/api/review/26')
+        .post('/api/review/1')
         .send({
           rating: 5,
           comment: 'ENAKKKKK',
@@ -483,12 +438,15 @@ describe('OrderController Test', () => {
 
       logger.info(response.body);
       expect(response.status).toBe(201);
-      expect(response.body.data.message).toBe('Berhasil memberikan review');
+      expect(response.body.data.message).toBe(
+        'Your review has been submitted successfully',
+      );
     });
 
     it('Should be an invalid test when the user gives a reviews (User try post review more than 1)', async () => {
+      await testService.createDummyReview();
       const response = await request(app.getHttpServer())
-        .post('/api/review/26')
+        .post('/api/review/1')
         .send({
           rating: 5,
           comment: 'ENAKKKKK',
@@ -497,14 +455,12 @@ describe('OrderController Test', () => {
 
       logger.info(response.body);
       expect(response.status).toBe(400);
-      expect(response.body.errors).toBe(
-        'Kamu hanya bisa melakukan review 1 kali',
-      );
+      expect(response.body.errors).toBe('You can only review it once');
     });
 
     it('Should be an invalid test when the user gives a reviews (rating lower than 1)', async () => {
       const response = await request(app.getHttpServer())
-        .post('/api/review/26')
+        .post('/api/review/1')
         .send({
           rating: 0,
           comment: 'ENAKKKKK',
@@ -518,7 +474,7 @@ describe('OrderController Test', () => {
 
     it('Should be an invalid test when the user gives a reviews (rating greater than 5)', async () => {
       const response = await request(app.getHttpServer())
-        .post('/api/review/26')
+        .post('/api/review/1')
         .send({
           rating: 6,
           comment: 'ENAKKKKK',
@@ -532,7 +488,7 @@ describe('OrderController Test', () => {
 
     it('Should be an invalid test when the user gives a reviews (decimal number)', async () => {
       const response = await request(app.getHttpServer())
-        .post('/api/review/26')
+        .post('/api/review/1')
         .send({
           rating: 4.5,
           comment: 'ENAKKKKK',
@@ -546,7 +502,7 @@ describe('OrderController Test', () => {
 
     it('Should be an invalid test when the user gives a reviews (comment not value)', async () => {
       const response = await request(app.getHttpServer())
-        .post('/api/review/26')
+        .post('/api/review/1')
         .send({
           rating: 5,
           comment: '',
@@ -560,7 +516,7 @@ describe('OrderController Test', () => {
 
     it('Should be an invalid test when the user gives a reviews (Comment length more than 250 )', async () => {
       const response = await request(app.getHttpServer())
-        .post('/api/review/26')
+        .post('/api/review/1')
         .send({
           rating: 5,
           comment:

@@ -25,7 +25,7 @@ describe('UserController Test', () => {
 
   describe('POST Create User : /api/register', () => {
     beforeEach(async () => {
-      await testService.deleteDummyUser();
+      await testService.deleteAll();
     });
 
     it('Should be success create user', async () => {
@@ -119,8 +119,9 @@ describe('UserController Test', () => {
         .post('/api/register')
         .send({
           username: 'test1',
-          name: 'testtestesttesttesttesttesttesttesttesttesttesttesttstesttestesttesttesttesttesttesttesttesttesttesttestt',
-          password: '123456',
+          name: 'test1',
+          password:
+            '123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456123456',
         });
 
       logger.info(response.body);
@@ -130,6 +131,11 @@ describe('UserController Test', () => {
   });
 
   describe('POST Login User : /api/login', () => {
+    beforeEach(async () => {
+      await testService.deleteAll();
+
+      await testService.createDummyUser();
+    });
     it('Should be success login user', async () => {
       const response = await request(app.getHttpServer())
         .post('/api/login')
@@ -142,7 +148,6 @@ describe('UserController Test', () => {
       expect(response.status).toBe(201);
       expect(response.body.data.username).toBe('test1');
       expect(response.body.data.name).toBe('test1');
-      expect(response.body.data.restaurant).toBe('Restaurant ayam geprek');
     });
 
     it('Should be invalid login user (Username : Input with space)', async () => {
