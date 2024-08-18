@@ -24,7 +24,16 @@ export class FoodsService {
   ) {}
 
   async createFood(request: IRequestFormFood): Promise<IResponseFormFood> {
-    this.logger.info('Create product ' + JSON.stringify(request));
+    this.logger.info(
+      'Create product ' +
+        JSON.stringify({
+          foodName: request.foodName,
+          description: request.description,
+          request,
+          price: request.price,
+          category: request.category,
+        }),
+    );
     const validateFileImage = this.validationService.fileFilter(
       request.fileImage,
       request.image,
@@ -53,7 +62,9 @@ export class FoodsService {
           name: foodName,
           description,
           price,
-          image: !fileName ? null : fileName.display_name,
+          public_id_img: !fileName ? null : fileName.public_id,
+          format_img: !fileName ? null : fileName.format,
+          version_img: !fileName ? null : fileName.version.toString(),
           category: {
             create: [
               {
@@ -74,7 +85,9 @@ export class FoodsService {
         name: insertDataFoodAndCategoryQuery.name,
         description: insertDataFoodAndCategoryQuery.description,
         price: insertDataFoodAndCategoryQuery.price,
-        image: insertDataFoodAndCategoryQuery.image,
+        public_id_img: insertDataFoodAndCategoryQuery.public_id_img,
+        format_img: insertDataFoodAndCategoryQuery.format_img,
+        version_img: insertDataFoodAndCategoryQuery.version_img,
         restaurantName: insertDataFoodAndCategoryQuery.restaurantName,
       },
     };
@@ -91,7 +104,9 @@ export class FoodsService {
         description: true,
         price: true,
         restaurantName: true,
-        image: true,
+        public_id_img: true,
+        format_img: true,
+        version_img: true,
         isRecommendation: true,
         category: {
           select: {
@@ -112,7 +127,9 @@ export class FoodsService {
         description: food.description,
         price: food.price,
         restaurantName: food.restaurantName,
-        image: food.image,
+        public_id_img: food.public_id_img,
+        format_img: food.format_img,
+        version_img: food.version_img,
         isRecommendation: food.isRecommendation,
         category: food.category.map((value) => value.category.name),
       };
@@ -135,6 +152,11 @@ export class FoodsService {
       request.fileImage,
       request.image,
     );
+
+    let fileName = null;
+    if (validateFileImage !== null) {
+      fileName = await this.cloudinaryService.uploadFile(request.fileImage);
+    }
 
     const validationRequest = this.validationService.validate(
       FoodValidaton.UPDATE_FORM_FOOD,
@@ -159,7 +181,14 @@ export class FoodsService {
         foodId: findFoodQuery.foodId,
         restaurantName: findFoodQuery.restaurantName,
       },
-      data: { name: foodName, description, price, image: validateFileImage },
+      data: {
+        name: foodName,
+        description,
+        price,
+        public_id_img: !fileName ? null : fileName.public_id,
+        format_img: !fileName ? null : fileName.format,
+        version_img: !fileName ? null : fileName.version,
+      },
     });
 
     return {
@@ -169,7 +198,9 @@ export class FoodsService {
         name: updateFoodQuery.name,
         description: updateFoodQuery.description,
         price: updateFoodQuery.price,
-        image: updateFoodQuery.image,
+        public_id_img: updateFoodQuery.public_id_img,
+        format_img: updateFoodQuery.format_img,
+        version_img: updateFoodQuery.version_img,
         restaurantName: updateFoodQuery.restaurantName,
       },
     };
@@ -210,7 +241,9 @@ export class FoodsService {
         name: deletedFoodQuery.name,
         description: deletedFoodQuery.description,
         price: deletedFoodQuery.price,
-        image: deletedFoodQuery.image,
+        public_id_img: deletedFoodQuery.public_id_img,
+        format_img: deletedFoodQuery.format_img,
+        version_img: deletedFoodQuery.version_img,
         restaurantName: deletedFoodQuery.restaurantName,
       },
     };
@@ -299,6 +332,9 @@ export class FoodsService {
           },
         });
 
+        if (findCategoryQuery.length === 0) {
+          return { foods: [] };
+        }
         filter = {
           restaurant: {
             city_name: {
@@ -307,7 +343,11 @@ export class FoodsService {
             },
           },
           category: {
-            some: { category: { name: findCategoryQuery[0].name } },
+            some: {
+              category: {
+                name: findCategoryQuery[0].name,
+              },
+            },
           },
         };
       }
@@ -321,7 +361,9 @@ export class FoodsService {
         description: true,
         price: true,
         restaurantName: true,
-        image: true,
+        public_id_img: true,
+        format_img: true,
+        version_img: true,
         isRecommendation: true,
         restaurant: {
           select: {
@@ -372,7 +414,9 @@ export class FoodsService {
         description: food.description,
         price: food.price,
         restaurantName: food.restaurantName,
-        image: food.image,
+        public_id_img: food.public_id_img,
+        format_img: food.format_img,
+        version_img: food.version_img,
         isRecommendation: food.isRecommendation,
         rating: calcRating(food.restaurant.review),
         category: food.category.map((value) => value.category.name),
@@ -410,7 +454,9 @@ export class FoodsService {
         description: true,
         price: true,
         restaurantName: true,
-        image: true,
+        public_id_img: true,
+        format_img: true,
+        version_img: true,
         isRecommendation: true,
         category: {
           select: {
@@ -456,7 +502,9 @@ export class FoodsService {
         description: food.description,
         price: food.price,
         restaurantName: food.restaurantName,
-        image: food.image,
+        public_id_img: food.public_id_img,
+        format_img: food.format_img,
+        version_img: food.version_img,
         category: food.category.map((value) => value.category.name),
         isRecommendation: food.isRecommendation,
       };

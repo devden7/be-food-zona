@@ -49,7 +49,9 @@ export class ValidationService {
         items[j].description !== itemsBody[j].description ||
         items[j].price !== itemsBody[j].price ||
         items[j].restaurantName !== itemsBody[j].restaurantName ||
-        items[j].image !== itemsBody[j].image
+        items[j].public_id_img !== itemsBody[j].public_id_img ||
+        items[j].version_img !== itemsBody[j].version_img ||
+        items[j].format_img !== itemsBody[j].format_img
       ) {
         throw new HttpException('Order not valid!', 400);
       } else {

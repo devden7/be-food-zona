@@ -8,11 +8,13 @@ export class CloudinaryService {
   uploadFile(file: Express.Multer.File): Promise<CloudinaryResponse> {
     return new Promise<CloudinaryResponse>((resolve, reject) => {
       const fileName = file.originalname.split('.').slice(0, -1).join('.');
+      const formatImage = file.originalname.split('.').slice(-1).join('.');
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           public_id:
             new Date().toISOString().replace(/:/g, '-') + '-' + fileName,
           folder: 'foods',
+          format: formatImage,
         },
         (error, result) => {
           if (error) return reject(error);

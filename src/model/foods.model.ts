@@ -26,7 +26,7 @@ export interface IRequestFormUpdateFood {
   foodName: string;
   description: string;
   price: number;
-  fileImage?: Image | undefined;
+  fileImage?: Express.Multer.File | undefined;
   category?: string;
   image?: string;
   userRestaurant: string;
@@ -39,7 +39,9 @@ export interface IResponseFormFood {
     name: string;
     description: string;
     price: number;
-    image?: string | null;
+    public_id_img: string | null;
+    format_img: string | null;
+    version_img: string | null;
     restaurantName?: string;
   };
 }
@@ -50,7 +52,9 @@ export interface dataFood {
   description: string;
   price: number;
   category?: string[];
-  image?: string | null;
+  public_id_img: string | null;
+  format_img: string | null;
+  version_img: string | null;
   restaurantName?: string;
   totalPrice?: number;
   quantity?: number;
