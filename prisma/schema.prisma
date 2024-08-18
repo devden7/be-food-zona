@@ -93,7 +93,9 @@ model Food {
   description String @db.VarChar(250)
   price Int 
   restaurantName String @db.VarChar(50)
-  image String? @db.VarChar(250)
+  public_id_img String? @db.VarChar(500)
+  format_img String? @db.VarChar(250)
+  version_img String? @db.VarChar(250)
   isRecommendation Boolean?
   category FoodCategory[]
   restaurant Restaurant @relation(fields: [restaurantName], references: [restaurantName])
