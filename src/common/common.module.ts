@@ -1,15 +1,15 @@
 import { Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ServeStaticModule } from '@nestjs/serve-static';
 import { WinstonModule } from 'nest-winston';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import * as winston from 'winston';
-import { join } from 'path';
 
 import { PrismaServices } from './prisma.service';
 import { ValidationService } from './validation.service';
 import { ErrorFiler } from './error.filter';
 import { AuthMiddleware } from './auth.middleware';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryService } from './cloudinary.service';
 
 @Global()
 @Module({
@@ -20,6 +20,7 @@ import { AuthMiddleware } from './auth.middleware';
           format: 'YY-MM-DD HH:mm:ss',
         }),
         winston.format.json(),
+        winston.format.colorize({ all: true }),
       ),
       transports: [new winston.transports.Console()],
     }),
@@ -33,17 +34,24 @@ import { AuthMiddleware } from './auth.middleware';
         expiresIn: '24h',
       },
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '../../'),
-      renderPath: 'images',
-    }),
   ],
   providers: [
     PrismaServices,
     ValidationService,
+    CloudinaryService,
     { provide: 'APP_FILTER', useClass: ErrorFiler },
+    {
+      provide: 'CLOUDINARY',
+      useFactory: () => {
+        return cloudinary.config({
+          cloud_name: process.env.CLOUDINARY_NAME,
+          api_key: process.env.CLOUDINARY_API_KEY,
+          api_secret: process.env.CLOUDINARY_API_SECRET,
+        });
+      },
+    },
   ],
-  exports: [PrismaServices, ValidationService],
+  exports: [PrismaServices, ValidationService, CloudinaryService],
 })
 export class CommonModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

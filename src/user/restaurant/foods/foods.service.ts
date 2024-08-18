@@ -12,12 +12,14 @@ import {
 } from 'src/model/foods.model';
 import { FoodValidaton } from './foods.validation';
 import { calcRating } from '../../../helper/util';
+import { CloudinaryService } from '../../../common/cloudinary.service';
 
 @Injectable()
 export class FoodsService {
   constructor(
     private validationService: ValidationService,
     private prismaService: PrismaServices,
+    private cloudinaryService: CloudinaryService,
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
   ) {}
 
@@ -28,6 +30,10 @@ export class FoodsService {
       request.image,
     );
 
+    let fileName = null;
+    if (validateFileImage !== null) {
+      fileName = await this.cloudinaryService.uploadFile(request.fileImage);
+    }
     const validationRequest = this.validationService.validate(
       FoodValidaton.CREATE_FORM_FOOD,
       request,
@@ -47,7 +53,7 @@ export class FoodsService {
           name: foodName,
           description,
           price,
-          image: validateFileImage,
+          image: !fileName ? null : fileName.display_name,
           category: {
             create: [
               {

@@ -1,8 +1,10 @@
+import { Express } from 'express';
+
 export interface IRequestFormFood {
   foodName: string;
   description: string;
   price: number;
-  fileImage?: Image | undefined;
+  fileImage?: Express.Multer.File | undefined;
   category?: string;
   image?: string;
   userRestaurant: string;
