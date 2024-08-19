@@ -29,7 +29,6 @@ export class FoodsService {
         JSON.stringify({
           foodName: request.foodName,
           description: request.description,
-          request,
           price: request.price,
           category: request.category,
         }),
@@ -146,7 +145,15 @@ export class FoodsService {
   }
 
   async editFood(request: IRequestFormUpdateFood): Promise<IResponseFormFood> {
-    this.logger.info('Edit Food:' + JSON.stringify(request));
+    this.logger.info(
+      'Edit Food:' +
+        JSON.stringify({
+          foodName: request.foodName,
+          description: request.description,
+          price: request.price,
+          category: request.category,
+        }),
+    );
 
     const validateFileImage = this.validationService.fileFilter(
       request.fileImage,
@@ -187,7 +194,7 @@ export class FoodsService {
         price,
         public_id_img: !fileName ? null : fileName.public_id,
         format_img: !fileName ? null : fileName.format,
-        version_img: !fileName ? null : fileName.version,
+        version_img: !fileName ? null : fileName.version.toString(),
       },
     });
 
