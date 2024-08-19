@@ -4,9 +4,10 @@ import {
   ExceptionFilter,
   HttpException,
 } from '@nestjs/common';
+import { PrismaClientValidationError } from '@prisma/client/runtime/library';
 import { ZodError } from 'zod';
 
-@Catch(ZodError, HttpException)
+@Catch(ZodError, HttpException, PrismaClientValidationError)
 export class ErrorFiler implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse();
