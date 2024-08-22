@@ -517,10 +517,11 @@ export class FoodsService {
       };
     });
 
+    console.log(finalResultQuery);
     return {
       foods: finalResultQuery,
       restaurantName: restaurantName,
-      reviews: getFoodQuery[0].restaurant.review,
+      reviews: getFoodQuery.length > 0 ? getFoodQuery[0].restaurant.review : [],
     };
   }
 
